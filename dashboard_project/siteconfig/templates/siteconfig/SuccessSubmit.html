@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load ed_extras %}
+{% block linklist %}
+{% endblock linklist %}
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2 class="card-title bg-primary text-center text-light z-depth-1-half">Users Successfully Created:</h2>
+        <div class="card-body">
+            {% for student in submitted %}
+                <li>{{ student }}</li>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

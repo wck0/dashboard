@@ -1,0 +1,8 @@
+{% if colapse %}
+{% else %}
+<ul class="dropdown-menu collapse">
+    <a class="nav-link btn btn-primary text-light" href="{% url 'VitaInfo' %}">Student Account</a>
+    <a class="nav-link btn btn-primary text-light" href="{% url 'VitaApplication' %}">Application</a>
+</ul>
+{% endif %}
+

@@ -1,0 +1,174 @@
+li a {
+        color: red;
+    }
+a:hover {
+  color: 490F75;
+}
+
+.inline{
+    display:inline;
+}
+
+#content {
+    padding: 5px;
+}
+
+/* Navbar settings */
+nav.mainnavigation {
+    padding: 5px;
+    white-space: nowrap;
+}
+
+.btn.btn-sm {
+    padding: .5rem 1.6rem;
+    font-size: .81rem;
+}
+
+/* Dropdown menu content (hidden by default)*/ 
+.dropdown-menu {
+  display: none; 
+  width: 103%
+}
+
+
+/* Show the dropdown menu on hover or click on mobile*/ 
+.dropdown:hover .dropdown-menu{
+        display: block;
+        background-color: #490F75;
+        border-color: #490F75;
+}
+
+/* mobile button formatting */
+@media (max-width: 992px) {
+    .collapsible {
+        width: 100%;
+    }
+}
+
+/* The hero image */
+.hero-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+
+
+  /* Set a specific height */
+  height: 30%;
+
+  /* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* Place text in the middle of the image */
+.hero-text {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+}
+
+/* card titles */
+.bg-secondary {
+    background-color: #6c757d!important;
+}
+.btn-primary {
+    background-color: #490F75 !important;
+    border-color: #490F75 !important;
+}
+
+.bg-primary {
+    background-color: #490F75 !important;
+    border-color: #490F75 !important;
+
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active    {
+    background-color: #7B45A4 !important;
+    border-color: #7B45A4 !important;
+}
+
+.btn-secondary {
+    color: #fff!important;
+    background-color: #6c757d!important;
+    border-color: #6c757d!important;
+}
+
+.btn-menu{
+    background-color: #7B45A4 !important;
+    border-color: #7B45A4 !important;
+}
+
+#CourseDelete {
+    margin: 0;
+}
+
+/* The section affects the couselists. Rows with no ID will show up on mobile. Rows with the 'tablet id' will show up on tablets and desktops. Rows with the "desktop" id will only show up on desktops. */
+#tablet {
+    display: none;
+}
+
+#desktop {
+    display:none;
+}
+
+@media (min-width: 576px) {
+    #tablet {
+        display: table-cell;
+    }
+}
+
+@media(min-width:770px){
+    #desktop{
+        display: table-cell;
+    }
+}
+
+
+/* format homepage */
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.center {
+    text-align: center;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 30px;
+}
+
+/* create thumbnail borders */
+img.thumbnail {
+  border: 3px solid #490F75;
+}
+
+/* formats the text in the menu itmes */
+.right {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* format the application page */
+.cke_reset {
+    width: 330px !important;
+}
+
+@media (min-width: 768px) {
+    .cke_reset {
+        width: 700px !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .cke_reset {
+        width: 835px !important;
+    }
+}
+
+

@@ -1,0 +1,18 @@
+{% extends "reportsbase.html" %}
+{% block content %}
+<form method="post" action="{% url target %}">{% csrf_token %}
+    <label>Choose Student to view course list</label>
+    </br>
+    <select id="studentid" name="student">
+        {% for student in students %}
+        <option value="{{ student.id }}">
+        {{ student.last_name }}, {{ student.first_name }}
+        </option>
+        {% endfor %}
+    </select>
+    </br>
+    <button type="submit">
+        Submit
+    </button>
+</form>
+{% endblock %}

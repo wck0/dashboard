@@ -1,0 +1,8 @@
+<script>
+    $(document).ready(function () {
+        $('{{ tablename }}').DataTable({
+            paging: false,
+            aaSorting: [[1, 'asc']], // Sorts it according to the second column. I need to find a way to just not sort the table
+        });
+    });
+</script>

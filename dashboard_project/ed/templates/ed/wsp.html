@@ -1,0 +1,58 @@
+{% load ed_extras %}
+<div class="card">
+    <h2 class="card-title bg-primary text-light text-center z-depth-1-half">WSP</h2>
+    <div class="card-body">
+        {% if wspcourses %}
+        <table id="WSPTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <td id="Desktop">CRN</td>
+                <td>Subject</td>
+                <td id="Desktop">Number</td>
+                <td>Title</td>
+                <td id="Desktop">Term</td>
+                {% if request.user|has_group:"Student" %}
+		        <td></td>
+                {% elif  request.user|has_group:"Director" %}
+                <td>Approved</td>
+		        {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for course in wspcourses %}
+            <tr>
+                <td id="Desktop">
+                    {{ course.crn }}
+                </td>
+                <td>
+                    {{ course.course.subject.short }}
+                </td>
+                <td id="Desktop">
+                    {{ course.course.number }}
+                </td>
+                <td>
+                    {{ course.course.title }}
+                </td>
+                <td id="Desktop">
+                    {{ course.term }}
+                </td>
+		{% if request.user|has_group:"Student" %}
+		<td>
+			{% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
+		</td>
+        {% elif request.user|has_group:"Director" %}
+        <td>
+            <input type="checkbox" form="approve" id="{{ course }}" name="{{ course }}" value="True" checked>
+        </td>
+		{% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% with tablename='#WSPTable' %}
+            {% include "ed/tablesettings.html" %}
+        {% endwith %}
+        <h4>{{ wspcourses.total }} Credits ({{ wspcourses.earned }} earned)</h4>
+        {% endif %}
+    </div>
+</div>

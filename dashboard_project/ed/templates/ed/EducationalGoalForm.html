@@ -1,0 +1,22 @@
+{% extends "edbase.html" %}
+
+{% block content %} 
+<h2>Add a New Goal</h2>
+<form method="post" action="{% url 'AddGoal' %}">{% csrf_token %}
+    {% for field in form %}
+    <div class="row">
+        <div class="col">
+            {{ field.label_tag }}
+        </div>
+        <div class="col">
+            {{ field }}
+        </div>
+    </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">
+        Submit
+    </button>
+</form>
+</br>
+{% include "ed/EDGoals.html" %}  
+{% endblock content %}

@@ -1,0 +1,10 @@
+{% extends 'vitabase.html' %}
+
+{% block content %}
+<a href="{% url 'VitaEditNarrative' %}">(edit)</a>
+{% if narrative %}
+{{ narrative|safe }}
+{% else %}
+<p>It seems you have not yet written your narrative.</p>
+{% endif %}
+{% endblock content %}

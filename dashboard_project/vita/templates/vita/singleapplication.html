@@ -1,0 +1,49 @@
+{% extends 'vitabase.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md">
+        <div class="card">
+            <h3 class="card-title text-center text-light bg-primary"><a class="text-light" href="{% url 'VitaApplication' %}/{{ application.user.username }}">{{ application.user.first_name }} {{ application.user.last_name }}</a></h3>
+            <div class="card">
+                <h4 class="card-title text-center bg-primary text-light">Application Essay</h4>
+                <div class="card-body">
+                    {{ application.essay|safe }}
+                    <p>Last modified: {{ application.last_modified }}</p>
+                    <p>Submitted: {{ application.last_submitted }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </br>
+    <div class="col-md">
+        <div class="card">
+            <h3 class="card-title bg-secondary text-light text-center">Feedback from Council</h3>
+            <div class="card-body">
+                {% if form %}
+                <form method="post" action="{% url 'VitaApplication' %}{{ application.user.username }}">
+                    {% csrf_token %}
+                    {{ form.media }}
+                    {{ form.as_p }}
+                    <button class="btn btn-primary" type="submit" name="action" value="save">Save</button>
+                </form>
+                {% else %}
+                {{ application.feedback|safe }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </br>
+</div>
+<div clas="col-md">
+   {% include 'vita/studentcourses.html' %}
+   {% if buttons %}
+   <form method="post" action="{% url 'VitaApplication' %}{{ application.user.username }}">
+   {% csrf_token %}
+   <button class="btn btn-success" type="submit" name="action" value="accept">Accept</button>
+   <button class="btn btn-warning" type="submit" name="action" value="revise">Revise</button>
+   <button class="btn btn-danger" type="submit" name="action" value="reject">Reject</button>
+   </form>
+   {% endif %}
+</div>
+{% endblock content %}

@@ -1,0 +1,8 @@
+{% load ed_extras %}
+{% if request.user|has_group:"Student" %}
+    {% include 'reports/studentdropdownmenu.html' %}
+{% elif request.user|has_group:"WSP Staff" %}
+    {% include 'reports/wspdropdownmenu.html' %}
+{% elif request.user|has_group:"Council" %}
+    {% include 'reports/councildropdownmenu.html' %}
+{% endif %}

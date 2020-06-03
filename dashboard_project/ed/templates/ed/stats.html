@@ -1,0 +1,54 @@
+{% extends "edbase.html" %}
+{% block content %}
+{{ total }} Total courses
+<br/>
+<br/>
+<table>
+    <tr>
+        <td>Divisions</td>
+        {% for div in divisions %}<td>{{ div }}</td>{% endfor %}
+    </tr>
+    <tr>
+        <td>Counts</td>
+        {% for count in divcounts %}<td>{{ count }}</td>{% endfor %}
+    </tr>
+    <tr>
+        <td>Percentage</td>
+        {% for perc in divpercent %}<td>{{ perc|floatformat:2 }}</td>
+        {% endfor %}
+    </tr>
+</table>
+<br/>
+<br/>
+<table>
+    <tr>
+        <td>Departments</td>
+        {% for dept in departments %}<td>{{ dept }}</td>{% endfor %}
+    </tr>
+    <tr>
+        <td>Counts</td>
+        {% for count in deptcounts %}<td>{{ count }}</td>{% endfor %}
+    </tr>
+    <tr>
+        <td>Percentage</td>
+        {% for perc in deptpercent %}<td>{{ perc|floatformat:2 }}</td>
+        {% endfor %}
+    </tr>
+</table>
+<br/>
+<br/>
+<table>
+    <tr>
+        <td>Subjects</td>
+        {% for subj in subjects %}<td>{{ subj }}</td>{% endfor %}
+    </tr>
+    <tr>
+        <td>Counts</td>
+        {% for count in subjcounts %}<td>{{ count }}</td>{% endfor %}
+    </tr>
+    <tr>
+        <td>Percentage</td>
+        {% for perc in subjpercent %}<td>{{ perc|floatformat:2 }}</td>{% endfor %}
+    </tr>
+</table>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'edbase.html' %}
+{% load ed_extras %}
+{% block content %}
+    <br>
+    <h3 align="center">Print Full Educational Design (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/pdf">pdf</a>) (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/csv">csv</a>)</h3>
+    </br>
+    <div align="center"> 
+        {% if request.user|has_group:"Director" %}
+        <form id="approve" method="post" action="{% url 'ApproveED' %}">{% csrf_token %}</form>
+            <input type ="hidden" name="student" value="{{ username }}" form="approve">
+            <button type="submit" class="btn btn-primary" form="approve">
+                Approve Educational Design
+            </button>
+        {% endif %}
+    </div>
+    </br>
+    <div class="card">
+        <h2 class="card-title bg-primary text-center text-light z-depth-1-half">Narrative {% if request.user|has_group:"Student" %}<a href="{% url 'VitaEditNarrative' %}" class="text-light">(edit)</a>{% endif %}</h2>
+        <div class="card-body">
+            {{ narrative|safe }}
+        </div>
+    </div>
+    {# line item approval from starts here #}
+    </br>
+    {% include "ed/major.html" %}
+    </br>
+    {% include "ed/minor.html" %}
+    </br>
+    {% include "ed/wsp.html" %}
+    </br>
+    {% include "ed/support.html" %}
+    {# line item approval form ends here #}
+    </br>
+    {% include "ed/EDGoals.html" %}
+    </br>
+    {% include "ed/divisions.html" %}
+{% endblock content %}

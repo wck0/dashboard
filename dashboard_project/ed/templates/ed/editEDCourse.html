@@ -1,0 +1,293 @@
+{% extends "edbase.html" %}
+{% load static %}
+{% block content %}
+<form method="post" action="{% url 'editEDCourse' %}{{ edcourse.id }}">{% csrf_token %}
+    <div class="editcoursediv">
+    <div class="container" style="border:1px solid #cecece;">
+        <div id="addcoursecontent0" class="row newcourserow">
+            <div class="col subj">
+                <label for="subjdropdown">Subject</label>
+                <select class="form-control subjectselect" id="subjdropdown" name="subject" required>
+                    <option selected="selected" value=""></option>
+                    {% for subj in subjects %}
+                    <option value="{{ subj }}">
+                    {{ subj }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col num">
+                <label for="numdropdown">Number</label>
+                <select class="form-control numberselect" id="numdropdown" name="number" required>
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="col title">
+                <label for="titledropdown">Title</label>
+                <select class="form-control titleselect" id="titledropdown" name="title" required>
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col instr">
+                <label for="instructortext">Instructor</label>
+                <input type="text" class="form-control instructor" id="instructortext" name="instructor" placeholder="instructor">
+            </div>
+            <div class="col cr">
+                <label for="creditstext">Credits</label>
+                <input type="text" class="form-control credits" id="creditstext" name="credits" placeholder="credits" required>
+            </div>
+            <div class="col crn">
+                <label for="crntext">CRN</label>
+                <input class="form-control crn" type="text" id="crntext" name="crn" placeholder="CRN">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col term">
+                <label for="termdropdown">Term</label>
+                <select class="form-control termselect" id="termdropdown" name="term" required>
+                    
+                    <option value="01">
+                    January
+                    </option>
+                    
+                    <option value="02">
+                    Spring
+                    </option>
+
+                    <option value="06">
+                    Summer
+                    </option>
+                    
+                    <option value="09">
+                    Fall
+                    </option>
+                </select>
+            </div>
+            <div class="col year">
+                <label for="yeardropdown">Year</label>
+                <select class="form-control yearselect" id="yeardropdown" name="year" required>
+                    <option value=""></option>
+                    {% for year in years %}
+                    <option value="{{ year }}">
+                    {{ year }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col maj1">
+                <label for="maj1select">MAJ1</label>
+                <select name="maj1" class="form-control maj1select" id="maj1dropdown">
+                    <option value=0>
+                        No
+                    </option>
+                    <option value=1>
+                        Yes
+                    </option>
+                </select>
+            </div>
+            <div class="col maj2">
+                <label for="maj2select">MAJ2</label>
+                <select name="maj2" class="form-control maj2select" id="maj2dropdown">
+                    <option value=0>
+                        No
+                    </option>
+                    <option value=1>
+                        Yes
+                    </option>
+                </select>
+            </div>
+            <div class="col min1">
+                <label for="min1select">MIN1</label>
+                <select name="min1" class="form-control min1select" id="min1dropdown">
+                    <option value=0>
+                        No
+                    </option>
+                    <option value=1>
+                        Yes
+                    </option>
+                </select>
+            </div>
+            <div class="col min2">
+                <label for="min2select">MIN2</label>
+                <select name="min2" class="form-control min2select" id="min2dropdown">
+                    <option value=0>
+                        No
+                    </option>
+                    <option value=1>
+                        Yes
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col completed">
+                <label for="completedselect">Completed?</label>
+                <select name="completed" class="form-control completedselect" id="completeddropdown">
+                    <option value=0>
+                        No
+                    </option>
+                    <option value=1>
+                        Yes
+                    </option>
+                </select>
+            </div>
+            <div class="col is_whittier">
+                <label for="is_whittierselect">Taken at Whittier College?</label>
+                <select name="is_whittier" class="form-control is_whittierelect" id="is_whittierdropdown">
+                    <option value=0>
+                        No
+                    </option>
+                    <option value=1>
+                        Yes
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row lastrow">
+            <div class="col notes">
+                <label for="notestext">Notes</label>
+                <input type="text" class="form-control instructor" id="notestext" name="notes" placeholder="notes">
+            </div>
+        </div>
+        <input type="hidden" name="add_course">
+   </div>
+   </div>
+   <input type="hidden" name="submit_info">
+
+    <button type="submit" class="btn btn-primary">
+        Submit
+    </button>
+</form> 
+{% endblock content %}
+<script>
+{% block javascript %}
+    function subjSelectChange(elem, subj) {
+        elem.val(subj);
+        numbsel = elem.parent().parent().find('.numberselect');
+        console.log(numbsel);
+        titlesel = elem.parent().parent().find('.titleselect');
+        var numbs;
+        var data1;
+        numbsel
+            .find('option')
+            .remove()
+            .end()
+        ;
+        titlesel
+            .find('option')
+            .remove()
+            .end()
+        ;
+        if (subj) {
+            $.getJSON("{% url 'API' %}" + subj + "/", function(data) {
+                data1 = data;
+                console.log(subj);
+            }).done(function() {
+                numbs=[];
+                $.each(data1, function(key, num) {
+                    //console.log(key, num);
+                    numbs.push(key);
+                });
+                numbs.sort();
+                numbsel.append('<option value="">Select Number</option>');
+                for( var i=0; i<=numbs.length; i++) {
+                    numbsel
+                        .append('<option value="'+ numbs[i] +'">' + numbs[i] + '</option>');
+                };
+                console.log("subjdropdownchangefinish");
+            });
+        }
+        return $.ajax();
+    }
+    function numberSelectChange(elem, num) {
+        elem.val(num);
+        titlesel = elem.parent().parent().find('.titleselect');
+        var subj = elem.parent().parent().find('.subjectselect').val();
+        var data1;
+        titlesel
+            .find('option')
+            .remove()
+            .end()
+        ;
+        if (num) {
+            $.getJSON("{% url 'API' %}" + subj + "/" + num + "/", 
+                function(data) {
+                    data1 = data;
+            }).done(function() {
+                console.log("getJSONTitlesDone");
+                titles=[];
+                $.each(data1, function(key, num) {
+                    //console.log(key, num);
+                    titles.push(key);
+                });
+                titles.sort();
+                console.log(titles);
+                for(var i=0; i<=titles.length; i++) {
+                    titlesel
+                        .append('<option value="'+titles[i]+'">'
+                                + titles[i] + '</option>')
+                        ;
+                };
+            });
+        }
+        return $.ajax();
+    }
+    $(document).ready(function(){
+        $('.subjectselect').change(function(){
+            subj = $(this).val();
+            subjSelectChange($(this), subj);
+        });
+
+        $('.numberselect').change(function() {
+            num = $(this).val();
+            numberSelectChange($(this), num);
+        });
+    });
+    
+    subjSelectChange($(".subjectselect"), "{{ edcourse.course.subject.short }}").done(function() {
+        numberSelectChange($(".numberselect"), "{{ edcourse.course.number }}").done(function() {
+            $(".titleselect").val("{{ edcourse.course.title }}").change();
+        });
+    });
+    $("#instructortext").val("{{ edcourse.instructor }}").change();
+    $("#creditstext").val("{{ edcourse.credits }}").change();
+    $("#crntext").val("{{ edcourse.crn }}").change();
+    $("#termdropdown").val("{{ edcourse.term.month|stringformat:'.2d' }}").change();
+    $("#yeardropdown").val("{{ edcourse.term.year }}").change();
+    {% if edcourse.maj1 %}
+    $("#maj1dropdown").val("1").change();
+    {% else %}
+    $("#maj1dropdown").val("0").change();
+    {% endif %}
+    {% if edcourse.maj2 %}
+    $("#maj2dropdown").val("1").change();
+    {% else %}
+    $("#maj2dropdown").val("0").change();
+    {% endif %}
+    {% if edcourse.min1 %}
+    $("#min1dropdown").val("1").change();
+    {% else %}
+    $("#min1dropdown").val("0").change();
+    {% endif %}
+    {% if edcourse.min2 %}
+    $("#min2dropdown").val("1").change();
+    {% else %}
+    $("#min2dropdown").val("0").change();
+    {% endif %}
+    {% if edcourse.completed %}
+    $("#completeddropdown").val("1").change();
+    {% else %}
+    $("#completeddropdown").val("0").change();
+    {% endif %}
+    {% if edcourse.is_whittier %}
+    $("#is_whittierdropdown").val("1").change();
+    {% else %}
+    $("#is_whittierdropdown").val("0").change();
+    {% endif %}
+    $("#notestext").val("{{ edcourse.notes|safe }}").change();
+{% endblock javascript %}
+</script>

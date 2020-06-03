@@ -1,0 +1,169 @@
+{% extends 'reportsbase.html' %}
+
+{% block content %}
+
+<br>
+<h3 align="center">Print Full Educational Design (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/pdf">pdf</a>) (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/csv">csv</a>)</h3>
+<br>
+
+<div class="container">
+    <!-- Majors -->
+    <div class="card">
+        <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Majors: </h3>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if major1 %}
+                    <h3 align="center">{{ major1.title }}:</h3>
+                    <canvas id="major1" style="max-width: 500px;"></canvas>
+                    <h4 align="center" style="font-weight: 300;">{{ major1.total }} Credits ({{ major1.earned }} earned)</h4>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {% if major2 %}
+                    <h3 align="center">{{ major2.title }}:</h3>
+                    <canvas id="major2" style="max-width: 500px;"></canvas>
+                    <h4 align="center" style="font-weight: 300;">{{ major2.total }} Credits ({{ major2.earned }} earned)</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- Minors -->
+    <div class="card">
+        <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Minors: </h2>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">                
+                    {% if minor1 %}
+                    <h3 align="center">{{ minor1.title }}:</h3>
+                    <canvas id="minor1" style="max-width: 500px;"></canvas>
+                    <h4 align="center" style="font-weight: 300;">{{ minor1.total }} Credits ({{ minor1.earned }} earned)</h4>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {% if minor2 %}
+                    <h3 align="center">{{ minor2.title }}:</h3>
+                    <canvas id="minor2" style="max-width: 500px;"></canvas>
+                    <h4 align="center" style="font-weight: 300;">{{ minor2.total }} Credits ({{ minor2.earned }} earned)</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- WSP and Total courses -->
+    <div class="row">
+        <!-- WSP -->
+        <div class="col-md-6"> 
+            <div class="card">
+                <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Wsp Courses: </h2>
+                {% if wspcourses %}
+                <canvas id="wsp" style="max-width: 500px;"></canvas>
+                <h4 align="center" style="font-weight: 300;">{{ wspcourses.total }} Credits ({{ wspcourses.earned }} earned)</h4>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Total --> 
+        <div class="col-md-6"> 
+            <div class="card">
+                <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Total: </h2>
+                <canvas id="Total" style="max-width: 500px;"></canvas>
+                <h4 align="center" style="font-weight: 300;">
+                    {% if usercourses.total < 120 %}
+                        120 Credits ({{ usercourses.earned }} earned)
+                    {% else %}
+                        {{ usercourses.total }} Credits ({{ usercourses.earned }} earned)
+                    {% endif %}
+                </h4>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- division courses -->
+    <div class="card">
+        <h2 class="card-title bg-primary text-center text-light z-depth-1-half">  Division Distribution: </h2>
+        <div class="row">
+            <div class="col-md-6" style="padding-left: 75px;">
+                {% for divname, courses in divcourses.items %}
+                <h4 style="font-weight: 400;">{{ divname }}: </h4>
+                <h5>{{ courses.total }} Credits ({{ courses.earned }} earned)</h5>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                <canvas id="pieChart" style="max-width: 500px;"></canvas>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
+{% endblock content %}
+<script>
+{% block javascript %}
+    const None = 0; // If the python returns None, the javascript will read that as zero
+    function donut(ID, earned, total) {
+        var ctxD = document.getElementById(ID).getContext('2d');
+        var myLineChart = new Chart(ctxD, {
+        type: 'doughnut',
+        data: {
+        labels: ["Complete", "Incomplete"],
+        datasets: [{
+        data: [ earned,  total - earned],
+        backgroundColor: ["#6f42c1", "#c7c7c7"], 
+        }]
+        },
+        options: {
+        responsive: true
+        }
+        });
+    }
+
+    // major 1
+    {% if major1 %} donut("major1", {{ major1.earned }}, {{ major1.total }}) {% endif %}
+    
+    // major 2
+    {% if major2 %} donut("major2", {{ major2.earned }}, {{ major2.total }}) {% endif %}
+
+    // minor 1
+    {% if minor1 %} donut("minor1", {{ minor1.earned }}, {{ minor1.total }}) {% endif %}
+
+    // minor 2
+    {% if minor2 %} donut("minor2", {{ minor2.earned }}, {{ minor2.total }}) {% endif %}
+   
+    // wsp 
+    {% if minor2 %} donut("wsp", {{ wspcourses.earned }}, {{ wspcourses.total }}) {% endif %}
+
+    // Total 
+    {% if usercourses.total < 120 %}
+        donut("Total", {{ usercourses.earned }}, 120)
+    {% else %}
+        donut("Total", {{ usercourses.earned }}, {{ usercourses.total }})
+    {% endif %}
+    
+    // Credit distribution
+    // fucntion to create department distributuions
+    let distribution = []; 
+    {% for divname, courses in divcourses.items %}
+    distribution.push({{ courses.total }});//{{ divname }}
+    {% endfor %}
+
+    // code for the chart
+    var ctxP = document.getElementById("pieChart").getContext('2d');
+    var myPieChart = new Chart(ctxP, {
+    type: 'pie',
+    data: {
+    labels: ["Humanities", "Natural Sciences", "Social Sciences", "Interdisciplinary", "Non-Academic"],
+    datasets: [{
+    data: distribution,
+    backgroundColor: ["#f7af1a", "#6F42C1", "#290043", "#c7c7c7", "#4D5360"],
+    }]
+    },
+    options: {
+    responsive: true
+    }
+    });
+{% endblock javascript %}
+</scritp>
+
+

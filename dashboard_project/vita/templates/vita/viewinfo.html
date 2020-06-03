@@ -1,0 +1,83 @@
+{% extends 'vitabase.html' %}
+
+{% block JS %}
+{% endblock JS %}
+
+{% block content %}
+<div class="card">
+<div class="card-body">
+    <div class="row">
+        <div class="col">
+            First name
+        </div>
+        <div class="col">
+            {{ user.first_name }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Last name
+        </div>
+        <div class="col">
+            {{ user.last_name }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Student ID
+        </div>
+        <div class="col">
+            {{ student.student_id }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Email
+        </div>
+        <div class="col">
+            {{ user.email }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Phone
+        </div>
+        <div class="col">
+            {{ student.phone.as_national }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Advisor Email
+        </div>
+        <div class="col">
+            {{ student.advisor_email }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Sponsor Email
+        </div>
+        <div class="col">
+            {{ student.sponsor_email }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            First term
+        </div>
+        <div class="col">
+            {{ student.first_term }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Graduation term
+        </div>
+        <div class="col">
+            {{ student.grad_term }}
+        </div>
+    </div>
+</div>
+</div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% include "edbase.html" %}
+{% block content %}
+<form method="post" action="{% url target %}">{% csrf_token %}
+    <label for="studentid">Select a student</label>
+    </br>
+    <select id="studentid" name="student" class="form-control">
+        {% for student in students %}
+        <option value="{{ student.id }}">
+        {{ student.last_name }}, {{ student.first_name }}
+        </option>
+        {% endfor %}
+    </select>
+    </br>
+    <button type="submit" class="btn btn-primary">
+        Submit
+    </button>
+</form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'vitabase.html' %}
+
+{% block JS %}
+{% endblock JS %}
+
+{% block content %}
+<div class="card">
+<div class="card-body">
+<form method="post" action="{% url 'VitaInfo' %}">{% csrf_token %}
+    <div class="row">
+        <div class="col">
+            <label for="id_email">Email:</label>
+        </div>
+        <div class="col">
+            <p> {{ user.email }} </p>
+        </div>
+    </div>
+    {% for field in form %}
+    <div class="form-group">
+        {% for error in field.errors %}
+        <p class="alert alert-warning">{{ error|escape }}</p>
+        {% endfor %}
+        <div class="row">
+            <div class="col">
+                {{ field.label_tag }}
+            </div>
+            <div class="col">
+                {{ field }}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+    <button class="btn btn-primary" type="submit">
+        Save
+    </button>
+</form>
+</div>
+</div>
+{% endblock content %}

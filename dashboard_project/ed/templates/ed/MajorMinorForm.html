@@ -1,0 +1,92 @@
+{% extends "edbase.html" %}
+{% block content %}
+<div class="card">
+    
+    <!-- Form headers -->
+    <form id="save" method="post" action"{% url 'MajorMinor' %}">{% csrf_token %}</form>
+    <form id="delete-maj1" method="post" action="{% url 'deleteMajor' %}" class="inline">{% csrf_token %}</form>
+    <form id="delete-maj2" method="post" action="{% url 'deleteMajor' %}" class="inline">{% csrf_token %}</form>
+    <form id="delete-min1" method="post" action="{% url 'deleteMinor' %}" class="inline">{% csrf_token %}</form>
+    <form id="delete-min2" method="post" action="{% url 'deleteMinor' %}" class="inline">{% csrf_token %}</form>
+
+    <!-- major1 -->
+        <h2 class="cart-title bg-primary text-light text-center z-depth-1-half">Major #1</h2>
+        <div class="card-body">
+            <label for="maj1title">Title</label>
+            <textarea class="form-control" id="maj1title" name="maj1title" form="save">{{ major1.title }}</textarea>
+            <label for="maj1summary">Summary</label>
+            <textarea class="form-control" id="maj1summary" name="maj1summary" rows=3 form="save">{{ major1.description }}</textarea>
+        </div>
+        <div>
+            <button class="btn btn-primary" type="submit" form="save">
+                Save
+            </button>
+            
+            <input type ="hidden" name="major_id" value="1" form="delete-maj1">
+            <button type="submit" class="btn btn-primary" form="delete-maj1">
+                Delete
+            </button>
+        </div>
+
+    <!-- major 2 -->
+        <h2 class="cart-title bg-primary text-light text-center z-depth-1-half">Major #2</h2>
+        <div class="card-body">
+            <label for="maj2title">Title</label>
+            <textarea class="form-control" id="maj2title" name="maj2title" form="save">{{ major2.title }}</textarea>
+            <label for="maj2summary">Summary</label>
+            <textarea class="form-control" id="maj2summary" name="maj2summary" rows=3 form="save">{{ major2.description }}</textarea>
+        </div>
+        <div> 
+            <button class="btn btn-primary" type="submit" form="save">
+                Save
+            </button>
+            
+            <input type ="hidden" name="major_id" value="2" form="delete-maj2">
+            <button type="submit" class="btn btn-primary" form="delete-maj2">
+                Delete
+            </button>
+        </div>
+
+    <!-- Minor 1 -->
+        <h2 class="cart-title bg-primary text-light text-center z-depth-1-half">Minor #1</h2>
+        <div class="card-body">
+            <label for="min1title">Title</label>
+            <textarea class="form-control" id="min1title" name="min1title" form="save">{{ minor1.title }}</textarea>
+            <label for="min1summary">Summary</label>
+            <textarea class="form-control" id="min1summary" name="min1summary" rows=3 form="save">{{ minor1.description }}</textarea>
+        </div>
+        <div> 
+            <button class="btn btn-primary" type="submit" form="save">
+                Save
+            </button>
+           
+            <input type ="hidden" name="minor_id" value="1" form="delete-min1">
+            <button type="submit" class="btn btn-primary" form="delete-min1">
+                Delete
+            </button>
+        </div>
+
+
+    <!-- Minor 2 -->
+        <h2 class="cart-title bg-primary text-light text-center z-depth-1-half">Minor #2</h2>
+        <div class="card-body">
+            <label for="min2title">Title</label>
+            <textarea class="form-control" id="min2title" name="min2title" form="save">{{ minor2.title }}</textarea>
+            <label for="min2summary">Summary</label>
+            <textarea class="form-control" id="min2summary" name="min2summary" rows=3 form="save">{{ minor2.description }}</textarea>
+        </div>
+        <div> 
+            <button class="btn btn-primary" type="submit" form="save">
+                Save
+            </button>
+            
+            <input type ="hidden" name="minor_id" value="2" form="delete-min2">
+            <button type="submit" class="btn btn-primary" form="delete-min2">
+                Delete
+            </button>
+        </div>
+    </div>
+</br>
+{% include 'ed/major.html' %}
+{% include 'ed/minor.html' %}
+{% endblock content %}

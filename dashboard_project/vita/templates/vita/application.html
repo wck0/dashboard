@@ -1,0 +1,52 @@
+{% extends 'vitabase.html' %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title bg-primary text-center text-light">{{ user.first_name }} {{ user.last_name }}</h2>
+    {% if application.submitted %}
+        {% if application.rejected %}
+        <p class="bg-danger text-center text-light">Not Approved</p>
+        {% elif application.accepted %}
+        <p class="text-center bg-success text-light">Accepted!</p>
+        {% elif application.resubmit %}
+        <p class="bg-warning text-center text-dark">Please revise and resubmit</p>
+        {% else %}
+        <p class="bg-primary text-center text-light">You have already submitted your application.</p>
+        {% endif %}
+    {% else %}
+        <p class="bg-warning text-center text-dark">You have not yet submitted your application.</p>
+    {% endif %}
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+            <p>Email Address: {{ user.email }}</p>
+            <form method="post" action="{% url 'VitaApplication' %}">{% csrf_token %}
+                {{ infoform.as_p }}
+                {{ appform.media }}
+                {{ appform.as_p }}
+            {% if not application.rejected and not application.accepted %}
+                <button class="btn btn-primary" type="submit" name="action" value="save">
+                    Save
+                </button>
+                {% if not application.submitted or application.resubmit %}
+                <button class="btn btn-secondary" type="submit" name="action" value="submit">
+                    Submit
+                </button>
+                {% endif %}
+            {% endif %}
+            </form>
+            </div>
+            <div class="col">
+                <p class="text-right">Last modified: {{ application.last_modified }}</p>
+                <div class="card">
+                    <h3 class="card-title bg-secondary text-light text-center">Feedback from Council</h3>
+                    <div class="card-body">
+                        {{ application.feedback|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'ed/allcourses.html' %}
+{% endblock content %}

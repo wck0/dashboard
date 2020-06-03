@@ -1,0 +1,15 @@
+{% extends 'reportsbase.html' %}
+
+{% block content %}
+
+<div>Course list (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/pdf">pdf</a>) (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/csv">csv</a>)</div>
+
+<h3> Division Distribution: </h3>
+{% for divname, courses in divcourses.items %}
+    <h4>{{ divname }}</h4>
+    <h5>{{ courses.total }} Credits ({{ courses.earned }} earned)</h5>
+{% endfor %}
+{% endblock content %}
+
+There are instructions for how to make chars with boot strap and an app called canvas
+https://mdbootstrap.com/docs/jquery/javascript/charts/

@@ -1,0 +1,38 @@
+{% extends "edbase.html" %}
+{% load static %}
+{% block content %}
+<form method="post" action="{% url 'replaceAppCourse' %}{{ appcourse.id }}">{% csrf_token %}
+    <div class="replacecoursediv">
+    <div class="container" style="border:1px solid #cecece;">
+        <div id="addcoursecontent0" class="row newcourserow">
+            <div class="col replacement">
+                <label for="replacementdropdown">Replacement</label>
+                <select class="form-control replacementselect" id="replacementdropdown" name="replacement" >
+                    <option selected="selected" value="{{ appcourse.replacement.id }}">
+                        {%if appcourse.replacement %} 
+                            {{ appcourse.replacement }}
+                        {% else %}
+                            Select a Replacment Course
+                        {% endif %}
+                    </option>
+                    {% for course in newcourses %}
+                    <option value="{{ course.id }}">
+                    {{ course }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row lastrow">
+            <div class="col reason">
+                <label for="reasontext">Reason</label>
+                <input type="text" class="form-control" id="reasontext" name="reason" placeholder="reason" value="{{ appcourse.reason }}">
+            </div>
+        </div>
+   </div>
+   </div>
+    <button type="submit" class="btn btn-primary">
+        Submit
+    </button>
+</form> 
+{% endblock %}

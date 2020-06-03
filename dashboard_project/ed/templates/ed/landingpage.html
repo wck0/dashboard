@@ -1,0 +1,12 @@
+{% extends "edbase.html" %}
+{% block content %}
+<p>
+{% if council %} Welcome, Council Member {{ request.user.get_full_namename }}
+    {# {% include 'ed/counsillanding.html' %} #}
+{% elif staff %} Welcome, Staff Member {{ request.user.get_full_namename }}
+    {# {% include 'ed/stafflanding.html' %} #}
+{% elif student %} Welcome, {{ request.user.get_full_name }}
+    {# {% include 'ed/studentlanding.html' %} #}
+{% else %} Welcome, Stranger {% endif %}
+    {# {% include 'ed/strangerlanding.html' %} #}
+{% endblock content %}

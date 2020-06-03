@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load ed_extras %}
+{% block linklist %}
+{% endblock linklist %}
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2 class="card-title bg-primary text-center text-light z-depth-1-half">Enter New Students</h2>
+        <div class="card-body">
+            <p>To upload your class into Dashboard. Please go to your classes moodle page and download a csv file containing each students first name, last name, and email. Then, input that file into Dashboard. This file will be used to generate accounts for each of your students.</p>
+            <p>If you encounter any issues, please contact Bill Kronholm.</p>
+            <form method="post" enctype="multipart/form-data">
+              {% if error == True %}
+                  <ul class="errorlist"><li>Please submit a ".csv" file.</li></ul>
+              {% endif %}
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

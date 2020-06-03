@@ -1,0 +1,109 @@
+{% load ed_extras %}
+<div class="card">
+    <h2 class="card-title bg-primary text-center text-light z-depth-1-half">Course Changes</h2>
+    <div class="card-body">
+    {% if usercourses %} <!-- swap for "if ther are changes"-->
+        <table id="ApprovedCoursesTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <td id="desktop">CRN</td>
+                <td>Subject</td>
+                <td id="tablet">Number</td>
+                <td>Title</td>
+                <td id="tablet">Credits</td>
+                <td id="desktop">Term</td>
+                <td id="desktop">MAJ1</td>
+                <td id="desktop">MAJ2</td>
+                <td id="desktop">MIN1</td>
+                <td id="desktop">MIN2</td>
+                <td id="tablet">Completed</td>
+                <td id="desktop">Whittier Course</td>
+                <td id="desktop">Notes</td>
+                {% if request.user|has_group:"Student" %}
+                <td></td>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for course in usercourses %}
+            <tr>
+                <td id="desktop">
+                    {{ course.crn }}
+                </td>
+                <td>
+                    {{ course.course.subject.short }}
+                </td>
+                <td id="tablet">
+                    {{ course.course.number }}
+                </td>
+                <td>
+                    {{ course.course.title }}
+                </td>
+                <td id="tablet">
+                    {{ course.credits }}
+                </td>
+                <td data-order="{{ course.term.code }}" id="desktop">
+                    {{ course.term }}
+                </td>
+                <td id="desktop">
+                {% if course.maj1 %}
+                    Y
+                {% else %}
+                    N
+                {% endif %}
+                </td>
+                <td id="desktop">
+                {% if course.maj2 %}
+                    Y
+                {% else %}
+                    N
+                {% endif %}
+                </td>
+                <td id="desktop">
+                {% if course.min1 %}
+                    Y
+                {% else %}
+                    N
+                {% endif %}
+                </td>
+                <td id="desktop">
+                {% if course.min2 %}
+                    Y
+                {% else %}
+                    N
+                {% endif %}
+                </td>
+                <td id="tablet">
+                {% if course.completed %}
+                    Y
+                {% else %}
+                    N
+                {% endif %}
+                </td>
+                <td id="desktop">
+                {% if course.is_whittier %}
+                    Y
+                {% else %}
+                    N
+                {% endif %}
+                </td>
+                <td id="desktop">{{ course.notes|safe }}</td>
+                {% if request.user|has_group:"Student" %}
+                <td>
+                {% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            $(document).ready(function () {
+                $('#ApprovedCoursesTable').DataTable({paging: false});
+            });
+        </script>
+        <h4>{{ usercourses.total }} Credits ({{ usercourses.earned }} earned)</h4
+    {% else %} <!-- if there are no changes -->
+    <p> You do not seem to have made any changes to your approved course list.</p>
+    {% endif %}
+</div>

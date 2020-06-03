@@ -1,0 +1,27 @@
+{% extends 'vitabase.html' %}
+
+{% block content %}
+<div class="container-fluid" style="width: 100%;">
+    {% for application in applications %}
+    {% if forloop.counter0|divisibleby:2 %}<div class="row justify-content-center">{% endif %}
+            <div  class="col-md-5">    
+                <div class="card">
+                    <h3 style="padding-left:15px"><a href="{% url 'VitaApplication' %}{{ application.user.username }}">{{ application.user.first_name }} {{ application.user.last_name }}</a></h3>
+                    {% if application.accepted %}
+                    <p class="bg-success text-light">Accepted!</p>
+                    {% elif application.rejected %}
+                    <p class="bg-danger text-light">Rejected</p>
+                    {% elif application.resubmit %}
+                    <p class="bg-warning text-light">Revise</p>
+                    {% else %}
+                    <p class="bg-primary text-light">Awaiting Review</p>
+                    {% endif %}
+                    <p>Last modified: {{ application.last_modified }}</p>
+                    <p>Submitted: {{ application.last_submitted }}</p>
+                </div>
+                <br>
+            </div>
+        {% if forloop.counter|divisibleby:2 %}</div>{% endif %}   
+    {% endfor %}
+</div>
+{% endblock content %}

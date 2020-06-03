@@ -1,0 +1,6 @@
+{% extends 'edbase.html' %}
+
+{% block content %}
+{% include 'ed/allcourses.html' %}
+<a class="btn btn-primary" href="{% url 'AddCourse' %}">Add a course</a>
+{% endblock content %}
