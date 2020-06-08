@@ -168,7 +168,7 @@ class MajorMinorModelTest(TestCase):
         student.save()
         other_student = User()
         other_student.username = "another student"
-        other_student.set_password("secure password")
+        other_student.set_password("more secure password")
         other_student.save()
         
         major = Major()
@@ -290,4 +290,146 @@ class CourseModelTest(TestCase):
             course.save()
             course.full_clean()
     
+class EDCourseModelTest(TestCase):
+    def test_saving_and_retrieving_edcourse(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        other_student = User()
+        other_student.username = "another student"
+        other_student.set_password("more secure password")
+        other_student.save()
         
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = other_student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        saved_edcourses = EDCourse.objects.all()
+        self.assertEqual(saved_edcourses.count(), 2)
+        
+        first_saved_edcourse = saved_edcourses[0]
+        second_saved_edcourse = saved_edcourses[1]
+        
+        self.assertEqual(first_saved_edcourse, edcourse)
+        self.assertEqual(first_saved_edcourse.student, student)
+        self.assertEqual(first_saved_edcourse.course, course)
+        self.assertEqual(first_saved_edcourse.credits, 3)
+        self.assertEqual(second_saved_edcourse, other_edcourse)
+        self.assertEqual(second_saved_edcourse.student, other_student)
+        self.assertEqual(second_saved_edcourse.course, other_course)
+        self.assertEqual(second_saved_edcourse.credits, 4)
+        
+    def test_cannot_save_empty_edcourse(self):
+        edcourse = EDCourse()
+        with self.assertRaises(IntegrityError):
+            edcourse.save()
+            edcourse.full_clean()
+    
+    def test_cannot_save_edcourse_missing_student(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        # missing student
+        edcourse = EDCourse()
+        edcourse.course = course
+        edcourse.credits = 3
+        
+        with self.assertRaises(IntegrityError):
+            edcourse.save()
+            edcourse.full_clean()
+    
+    def test_cannot_save_edcourse_missing_course(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        # missing course
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.credits = 3
+        
+        with self.assertRaises(IntegrityError):
+            edcourse.save()
+            edcourse.full_clean()
+
+    def test_cannot_save_edcourse_missing_credits(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        # missing credits
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        
+        with self.assertRaises(IntegrityError):
+            edcourse.save()
+            edcourse.full_clean()
