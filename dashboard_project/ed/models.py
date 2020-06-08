@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django import forms
 # Create your models here.
 
+# TODO: Switch to f-strings for string formatting.
+
 class Term(models.Model):
     """
     The Registrar's Office refers to terms using a code of the form YYYYMM.

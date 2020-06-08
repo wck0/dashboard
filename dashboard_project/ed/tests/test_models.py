@@ -4,7 +4,6 @@ from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 from ed.models import *
 
-# TODO: class CourseModelTest(TestCase):
 # TODO: class EDCourseModelTest(TestCase):
 # TODO: class ApprovedCourseModelTest(TestCase):
 # TODO: class EducationalGoalModelTest(TestCase):
@@ -237,3 +236,58 @@ class MajorMinorModelTest(TestCase):
         self.assertEqual(second_saved_minor.description,
                          "Tricking people into watching movies")
         self.assertEqual(second_saved_minor.number, 1)
+
+class CourseModelTest(TestCase):
+    def test_saving_and_retrieving_course(self):
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        saved_courses = Course.objects.all()
+        self.assertEqual(saved_courses.count(), 2)
+        
+        first_saved_course = saved_courses[0]
+        second_saved_course = saved_courses[1]
+        
+        self.assertEqual(first_saved_course, course)
+        self.assertEqual(first_saved_course.subject, subject)
+        self.assertEqual(first_saved_course.number, "120")
+        self.assertEqual(first_saved_course.title, "Why Read?")
+        self.assertEqual(second_saved_course, other_course)
+        self.assertEqual(second_saved_course.subject, other_subject)
+        self.assertEqual(second_saved_course.number, "151")
+        self.assertEqual(second_saved_course.title, "Cell & Molecular Biology")
+        
+    def test_cannot_save_empty_course(self):
+        course = Course()
+        with self.assertRaises(IntegrityError):
+            course.save()
+            course.full_clean()
+    
+    def test_cannot_save_course_without_subject(self):
+        course = Course()
+        course.number = "141"
+        course.title = "Calculus & Analytical Geometry I"
+        with self.assertRaises(IntegrityError):
+            course.save()
+            course.full_clean()
+    
+        
