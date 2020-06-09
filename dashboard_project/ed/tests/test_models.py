@@ -4,8 +4,6 @@ from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 from ed.models import *
 
-# TODO: class ApprovedCourseModelTest(TestCase):
-# TODO: class EducationalGoalModelTest(TestCase):
 # TODO: relocate EDCourseForm to forms.py; update all references accordingly
 
 class TermModelTest(TestCase):
@@ -697,3 +695,152 @@ class ApprovedCourseModelTest(TestCase):
         with self.assertRaises(IntegrityError):
             approvedcourse.save()
             approvedcourse.full_clean()
+
+class EducationalGoalModelTest(TestCase):
+    def test_saving_and_retrieving_educationalgoal(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        educationalgoal = EducationalGoal()
+        educationalgoal.student = student
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        educationalgoal.save()
+        
+        educationalgoal.courses.add(edcourse)
+        educationalgoal.save()
+        
+        other_student = User()
+        other_student.username = "another student"
+        other_student.set_password("more secure password")
+        other_student.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = other_student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        other_educationalgoal = EducationalGoal()
+        other_educationalgoal.student = other_student
+        other_educationalgoal.title = "Achieve Equality"
+        other_educationalgoal.description = "We can dream..."
+        other_educationalgoal.save()
+        
+        other_educationalgoal.courses.add(other_edcourse)
+        other_educationalgoal.save()
+        
+        all_educationalgoals = EducationalGoal.objects.all()
+        self.assertEqual(all_educationalgoals.count(), 2)
+        
+        first_educationalgoal = all_educationalgoals[0]
+        second_educationalgoal = all_educationalgoals[1]
+        
+        self.assertEqual(first_educationalgoal, educationalgoal)
+        self.assertIn(edcourse, first_educationalgoal.courses.all())
+        self.assertEqual(second_educationalgoal, other_educationalgoal)
+        self.assertIn(other_edcourse, second_educationalgoal.courses.all())
+    
+    def test_can_save_many_edcourses_to_an_educationalgoal(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        educationalgoal = EducationalGoal()
+        educationalgoal.student = student
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        educationalgoal.save()
+        
+        educationalgoal.courses.add(edcourse)
+        educationalgoal.save()
+        educationalgoal.courses.add(other_edcourse)
+        educationalgoal.save()
+        
+        saved_educationalgoal = EducationalGoal.objects.first()
+        self.assertEqual(saved_educationalgoal, educationalgoal)
+        
+        self.assertEqual(saved_educationalgoal.courses.count(), 2)
+        self.assertIn(edcourse, saved_educationalgoal.courses.all())
+        self.assertIn(other_edcourse, saved_educationalgoal.courses.all())
+    
+    def test_cannot_save_empty_educationalgoal(self):
+        educationalgoal = EducationalGoal()
+        
+        with self.assertRaises(IntegrityError):
+            educationalgoal.save()
+            educationalgoal.full_clean()
+            
+    def test_cannot_save_educationalgoal_without_student(self):
+        educationalgoal = EducationalGoal()
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        
+        with self.assertRaises(IntegrityError):
+            educationalgoal.save()
+            educationalgoal.full_clean()
