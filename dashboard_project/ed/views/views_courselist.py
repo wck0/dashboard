@@ -56,7 +56,7 @@ def CourseList(request, username=None):
 
 
         else:
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
     # GET request handle student and staff/council
     elif request.method == 'GET':
@@ -111,11 +111,11 @@ def CourseList(request, username=None):
 
         else:
             #no groups
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
     # not GET or POST request
     else:
-        return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('Index'))
 
 #Displays all courses that are offered
 @login_required
@@ -138,14 +138,14 @@ def AllCourses(request, subj=''):
 def EditCourse(request, edcourse_id=None):
     user = request.user
     if not is_student(user):
-        return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('Index'))
 
     if request.method == 'GET':
         if edcourse_id:
             try:
                 edcourse = EDCourse.objects.get(student=user, id=edcourse_id)
             except EDCourse.DoesNotExist:
-                return HttpResponseRedirect(reverse('Index'))
+                return redirect(reverse('Index'))
             year = datetime.date.today().year
             subjects = Subject.objects.all()
             years = [i for i in range(year-4, year+4)]
@@ -238,12 +238,12 @@ def EditCourse(request, edcourse_id=None):
                     edcourse.crn = crn
                 #some checking maybe?
                 edcourse.save()
-                return HttpResponseRedirect(reverse('CourseList'))
+                return redirect(reverse('CourseList'))
             else:
-                return HttpResponseRedirect(reverse('Index'))
-        return HttpResponseRedirect(reverse('CourseList'))
+                return redirect(reverse('Index'))
+        return redirect(reverse('CourseList'))
     
-    return HttpResponseRedirect(reverse('Index'))
+    return redirect(reverse('Index'))
 
 #Allows user to add an EDCourse object (class) to their ED
 @login_required
@@ -253,7 +253,7 @@ def AddCourse(request):
 
         #student only
         if not is_student(user):
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
         year = datetime.date.today().year
         subjects = Subject.objects.all()
@@ -274,7 +274,7 @@ def AddCourse(request):
     elif request.method == 'POST':
 
         if not is_student(user):
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
         
         subjs = request.POST.getlist('subject')
         nums = request.POST.getlist('number')
@@ -368,8 +368,8 @@ def AddCourse(request):
                     newedc.crn = crn
                 #some checking maybe?
                 newedc.save()
-        return HttpResponseRedirect(reverse('AddCourse'))
-    return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('AddCourse'))
+    return redirect(reverse('Index'))
 
 #Gets EDCourse object to be deleted and handles error if DNE
 @login_required
@@ -381,10 +381,10 @@ def DeleteEDCourse(request):
                                           id=request.POST.get('course_id'),
                                          )
             course.delete()
-            return HttpResponseRedirect(reverse('CourseList'))
+            return redirect(reverse('CourseList'))
 
         except EDCourse.DoesNotExist:
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
 # returns a page where students can write explanations for the diffrences between thier approved course list and thier current courselist
 @login_required
@@ -405,7 +405,7 @@ def ApprovedCourseList(request, username=None):
 
 
         else:
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
     # GET request handle student and staff/council
     elif request.method == 'GET':
@@ -470,25 +470,25 @@ def ApprovedCourseList(request, username=None):
 
         else:
             #no groups
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
     # not GET or POST request
     else:
-        return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('Index'))
 
 # Allows students to add more information to the removed courses section of the Approved Courses list
 @login_required
 def ReplaceAppCourse(request, appcourse_id=None):
     user = request.user
     if not is_student(user):
-        return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('Index'))
     
     if request.method == 'GET':
         if appcourse_id:
             try:
                 appcourse = ApprovedCourse.objects.get(student=user, id=appcourse_id)
             except ApprovedCourse.DoesNotExist:
-                return HttpResponseRedirect(reverse('Index'))
+                return redirect(reverse('Index'))
             
             # creates "newcourses", a Queryset of new courses that were not it the approved courses
             newcourses = all_courses(user)
@@ -519,17 +519,17 @@ def ReplaceAppCourse(request, appcourse_id=None):
             #some checking maybe?
             appcourse.save()
 
-            return HttpResponseRedirect(reverse('ApprovedCourses'))
+            return redirect(reverse('ApprovedCourses'))
         else:
-            return HttpResponseRedirect(reverse('Index'))
+            return redirect(reverse('Index'))
 
-    return HttpResponseRedirect(reverse('Index'))
+    return Hredirect(reverse('Index'))
 
 #Approves individual courses from the "Approved Courses Page"
 def ApproveAppCourseReplacement(request):
     user = request.user
     if is_student(user):
-        return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('Index'))
 
     if request.method == 'POST':
         replace = request.POST.get('replace') #a boolean variable that indicate if you replace or not
