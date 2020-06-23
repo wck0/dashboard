@@ -9,32 +9,15 @@ from ed.models import *
 from ed.tools import *
 from siteconfig.models import HeroImage
 
-# TODO: class EDIndexTest(TestCase):
-# TODO: class CourseListTest(TestCase):
-# TODO: class MajMinTest(TestCase):
 # TODO: class AllCoursesTest(TestCase):
-# TODO: class StatsTest(TestCase):
 # TODO: class EducationalDesignTest(TestCase):
 # TODO: class APITest(TestCase):
-# TODO: class AddCourseTest(TestCase):
-# TODO: class DeleteCourseTest(TestCase):
 # TODO: class EditCourseTest(TestCase):
-# TODO: class GoalsTest(TestCase):
-# TODO: class AddGoalTest(TestCase):
-# TODO: class EditGoalTest(TestCase):
-# TODO: class DeleteMajorTest(TestCase):
-# TODO: class DeleteMinorTest(TestCase):
-# TODO: class DeleteGoalTest(TestCase):
-# TODO: class ApproveEDTest(TestCase):
+# TODO: class AddCourseTest(TestCase):
+# TODO: class DeleteEDCourseTest(TestCase):
 # TODO: class ApprovedCourseListTest(TestCase):
 # TODO: class ReplaceAppCourseTest(TestCase):
 # TODO: class ApproveAppCourseReplacementTest(TestCase):
-
-class EDIndexTest(TestCase):
-    def test_uses_landingpage_template(self):
-        response = self.client.get(reverse(EDIndex))
-        
-        self.assertTemplateUsed(response, 'ed/landingpage.html')
 
 class CourseListTest(TestCase):
     def setUp(self):

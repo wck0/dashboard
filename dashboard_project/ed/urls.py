@@ -10,7 +10,7 @@ urlpatterns = [
     path('allcourses/<str:subj>',
          views.AllCourses, 
          name='AllCourses'),
-    path('stats/', views.Stats, name='Stats'),
+#    path('stats/', views.Stats, name='Stats'),
     path('educationaldesign/', views.ED, name="ED"),
     path('educationaldesign/<str:username>', views.ED, name="ED"),
     path('api/subject/', views.API,
