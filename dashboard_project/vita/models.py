@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 from ed.models import Term
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
@@ -76,7 +77,9 @@ class Menu_item(models.Model):
         return self.title
 
 class Home_page(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(null=True)
     text = RichTextField(blank=True, null=True)
-    publish_date = models.DateTimeField('Published')
+    publish_date = models.DateTimeField('Published',
+                                        default=timezone.now,
+                                       )
    

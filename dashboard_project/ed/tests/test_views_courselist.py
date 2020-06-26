@@ -227,3 +227,88 @@ class CourseListTest(TestCase):
         
         self.assertIn('hero', response.context)
         self.assertEqual(hero, response.context['hero'])
+        
+class EditEDCourseTest(TestCase):
+    def setUp(self):
+        student_group = Group.objects.create(name='Student')
+        test_student = User.objects.create_user(username='test_student',
+                                                password='thisisastudent',
+                                               )
+        test_student.groups.add(student_group)
+        
+        other_test_student = User.objects.create_user(username='other_student',
+                                                password='anotherstudent',
+                                               )
+        other_test_student.groups.add(student_group)
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = test_student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = test_student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        council_group = Group.objects.create(name='Council')
+        test_council = User.objects.create_user(username='test_council',
+                                                password='thisiscouncil',
+                                               )
+        
+        test_council.groups.add(council_group)
+        
+        wspstaff_group = Group.objects.create(name='WSP Staff')
+        test_wspstaff = User.objects.create_user(username='test_wspstaff',
+                                                password='thisiswspstaff',
+                                               )
+        test_wspstaff.groups.add(wspstaff_group)
+        
+    def test_anonymous_user_redirected_to_login(self):
+        response = self.client.get(reverse(EditEDCourse))
+        redirect_path = reverse('login') + '?next=' + reverse(EditEDCourse)
+        self.assertRedirects(response, redirect_path)
+        
+        response = self.client.post(reverse(EditEDCourse),
+                                    {'edcourse_id':0},
+                                   )
+        self.assertRedirects(response, redirect_path)
+    
+    def test_council_redirected_to_index(self):
+        test_council = User.objects.get(username='test_council')
+        logged_in = self.client.force_login(test_council)
+        
+        redirect_path = reverse('Index')
+        response = self.client.get(reverse(EditEDCourse))
+        self.assertRedirects(response, redirect_path)
+        
+        response = self.client.post(reverse(EditEDCourse),
+                                    {'edcourse_id':0},
+                                   )
+        # assertRedirects doesn't work right after POST?
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
