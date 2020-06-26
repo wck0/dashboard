@@ -135,7 +135,7 @@ def CourseList(request, username=None):
 #    return render(request, 'ed/allcourses.html', context)
 
 @login_required
-def EditCourse(request, edcourse_id=None):
+def EditEDCourse(request, edcourse_id=None):
     user = request.user
     if not is_student(user):
         return redirect(reverse('Index'))
