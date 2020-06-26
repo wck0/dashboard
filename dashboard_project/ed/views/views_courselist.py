@@ -117,22 +117,22 @@ def CourseList(request, username=None):
     else:
         return redirect(reverse('Index'))
 
-#Displays all courses that are offered
-@login_required
-def AllCourses(request, subj=''):
+##Displays all courses that are offered
+#@login_required
+#def AllCourses(request, subj=''):
 
-    if subj:
-        subject = Subject.objects.get(short=subj)
-        listofcourses = Course.objects.filter(subject=subject)
-    else:
-        listofcourses = Course.objects.all() #list of course objects
-    context = {
-            'usercourses':listofcourses,
-            'pagename': "All Courses",
-            'hero': hero,
-    }
+#    if subj:
+#        subject = Subject.objects.get(short=subj)
+#        listofcourses = Course.objects.filter(subject=subject)
+#    else:
+#        listofcourses = Course.objects.all() #list of course objects
+#    context = {
+#            'usercourses':listofcourses,
+#            'pagename': "All Courses",
+#            'hero': hero,
+#    }
 
-    return render(request, 'ed/allcourses.html', context)
+#    return render(request, 'ed/allcourses.html', context)
 
 @login_required
 def EditCourse(request, edcourse_id=None):

@@ -9,7 +9,6 @@ from ed.models import *
 from ed.tools import *
 from siteconfig.models import HeroImage
 
-# TODO: class AllCoursesTest(TestCase):
 # TODO: class EducationalDesignTest(TestCase):
 # TODO: class APITest(TestCase):
 # TODO: class EditCourseTest(TestCase):
