@@ -70,7 +70,7 @@ class Menu_item(models.Model):
     title = title = models.CharField(max_length=60)
     subtitle = models.CharField(max_length=120)
     link = models.CharField(max_length=60)
-    thumbnail = models.ImageField()
+    thumbnail = models.ImageField(null=True)
     order = models.CharField(max_length=2)
 
     def __str__(self):

@@ -141,7 +141,9 @@
                                 <p> {{ menu_item.subtitle }} </p>
                             </div>
                             <div class="media-right">
+                                {% if menu_item.thumbnail %}
                                 <img src='{{ menu_item.thumbnail.url }}' class="media-object thumbnail" style="width:60px">
+                                {% endif %}
                             </div>
                         </div>
                     </a>
@@ -150,12 +152,16 @@
                 <div class="col-lg-auto" style="padding-top: 20px"></div>
                 <div class="col-lg-5 bg-light">
                     <div class="row">
+                        {% if home.image %}
                         <img src='{{ home.image.url }}' class="center" style="width:80%">
+                        {% endif %}
                     </div>
                     <div class="row">
+                        {% if home.text %}
                         <div class="col center">
                             <p> {{ home.text|safe }} </p>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
  
