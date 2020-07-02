@@ -241,6 +241,10 @@ class EditEDCourseTest(TestCase):
                                                )
         other_test_student.groups.add(student_group)
         
+        term = Term()
+        term.code="202009"
+        term.save()
+        
         subject = Subject()
         subject.name = "English"
         subject.short = "ENGL"
@@ -293,7 +297,7 @@ class EditEDCourseTest(TestCase):
         redirect_path = reverse('login') + '?next=' + reverse(EditEDCourse)
         self.assertRedirects(response, redirect_path)
         
-        response = self.client.post(reverse(EditEDCourse),
+        response = self.client.post(reverse('editEDCourse'),
                                     {'edcourse_id':0},
                                    )
         self.assertRedirects(response, redirect_path)
@@ -303,8 +307,9 @@ class EditEDCourseTest(TestCase):
         logged_in = self.client.force_login(test_council)
         
         redirect_path = reverse('Index')
-        response = self.client.get(reverse(EditEDCourse))
-        self.assertRedirects(response, redirect_path)
+        response = self.client.get(reverse('editEDCourse'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
         
         response = self.client.post(reverse(EditEDCourse),
                                     {'edcourse_id':0},
@@ -312,3 +317,60 @@ class EditEDCourseTest(TestCase):
         # assertRedirects doesn't work right after POST?
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, redirect_path)
+    
+    def test_wspstaff_redirected_to_index(self):
+        test_wspstaff = User.objects.get(username='test_wspstaff')
+        logged_in = self.client.force_login(test_wspstaff)
+        
+        redirect_path = reverse('Index')
+        response = self.client.get(reverse('editEDCourse'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+        
+        response = self.client.post(reverse(EditEDCourse),
+                                    {'edcourse_id':0},
+                                   )
+        # assertRedirects doesn't work right after POST?
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+        
+    def test_student_can_edit_own_edcourse(self):
+        test_student = User.objects.get(username='test_student')
+        logged_in = self.client.force_login(test_student)
+        
+        edcourse = EDCourse.objects.filter(student=test_student).first()
+        
+        engl = Subject.objects.get(short="ENGL")
+        self.assertEqual(edcourse.course.subject, engl)
+        
+        biol = Subject.objects.get(short="BIOL")
+        cellbio = Course.objects.get(subject=biol,
+                                         number="151",
+                                         title="Cell & Molecular Biology",
+                                        )
+        
+        payload = {'subject': biol.short or '',
+                   'number': cellbio.number or '',
+                   'title': cellbio.title or '',
+                   'term': '09',
+                   'year': '2020',
+                   'cr': edcourse.credits or '',
+                   'crn': edcourse.crn or '',
+                   'instructor': 'Kronholm' or '',
+                   'completed': int(edcourse.completed) or 0,
+                   'maj1': int(edcourse.maj1) or 0,
+                   'maj2': int(edcourse.maj2) or 0,
+                   'min1': int(edcourse.min1) or 0,
+                   'min2': int(edcourse.min2) or 0,
+                   'is_whittier': int(edcourse.is_whittier) or 0,
+                   'notes': edcourse.notes or '',
+                  }
+        response = self.client.post(reverse('editEDCourse')+str(edcourse.id),
+                                    payload,
+                                   )
+        self.assertRedirects(response, reverse('CourseList'))
+        
+        new_edcourse = EDCourse.objects.filter(student=test_student).first()
+        self.assertEqual(new_edcourse.course, cellbio)
+        self.assertEqual(new_edcourse.term.code, 202009),
+        self.assertEqual(new_edcourse.instructor, 'Kronholm')
