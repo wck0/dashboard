@@ -193,3 +193,4 @@ PHONENUMBER_DEFAULT_REGION = 'US'
 
 # Forces django to use temporary files for uploads
 FILE_UPLOAD_HANDLERS = [ 'django.core.files.uploadhandler.TemporaryFileUploadHandler' ]
+FILE_UPLOAD_PERMISSIONS = 0o644

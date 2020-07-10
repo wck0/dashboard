@@ -4,7 +4,7 @@
     <div class="card-body">
         <h4 class="card-title bg-secondary text-light text-center z-depth-1">Removed Courses</h4>
         {% if removedcourses %}
-            <table id="RemovedCoursesTable" class="table table-striped table-bordered" style="width:100%">
+            <table id="RemovedCoursesTable" class="table table-striped table-bordered" style="width: 100%">
                 <thead>
                 <tr>
                     <td>Replaced Course</td>
@@ -28,11 +28,11 @@
                         {{ course.reason }}
                     </td>
                     {% if request.user|has_group:"Student" %}
-                    <td>
-                        <a href="{% url 'replaceAppCourse' %}{{course.id}}" class="btn btn-secondary btn-sm ">Edit</a>
+                    <td style="width: 90px">
+                        <a href="{% url 'replaceAppCourse' %}{{course.id}}" class="btn btn-secondary btn-sm " style="width:100%;">Edit</a>
                     </td>
                     {% elif request.user|has_group:"Director" %}
-                    <td>
+                    <td style="width: 90px">
                         <form method="post" action="{% url 'approveReplace' %}" class="inline">
                             {% csrf_token %}
                             <input type ="hidden" name="replace" value="True">
@@ -60,7 +60,7 @@
     </br>
     <h4 class="card-title bg-secondary text-light text-center z-depth-1">New Courses</h4>
         {% if newcourses %}
-            <table id="NewCoursesTable" class="table table-striped table-bordered" style="width:100%">
+            <table id="NewCoursesTable" class="table table-striped table-bordered table-responsive">
                 <thead>
                 <tr>
                     <td id="desktop">CRN</td>
@@ -146,11 +146,11 @@
                     </td>
                     <td id="desktop">{{ course.notes|safe }}</td>
                     {% if request.user|has_group:"Student" %}
-                    <td>
+                    <td style="width: 90px">
                     {% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
                     </td>
                     {% elif request.user|has_group:"Director" %}
-                    <td>
+                    <td style="width: 90px">
                         <form method="post" action="{% url 'approveReplace' %}" class="inline">
                             {% csrf_token %}
                             <input type ="hidden" name="student" value="{{ course.student }}">

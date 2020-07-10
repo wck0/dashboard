@@ -1,5 +1,7 @@
 import datetime
 from vita.models import Menu_item, Home_page
+from ed.tools import all_courses
+from poetfolio.tools import is_student
 from django.urls import reverse
 from django.views import generic
 from django.shortcuts import render
@@ -17,6 +19,13 @@ logger = logging.getLogger(__name__)
 def Index(request):
     menu = Menu_item.objects.order_by('order')
     home = Home_page.objects.order_by('-publish_date')[0]
+    
+    user = request.user
+    if is_student(request.user):
+        studentcourses = all_courses(user)
+    else:
+        studentcourses = None
+
     try:
         hero = HeroImage.objects.get(app='default')
     except:
@@ -25,5 +34,6 @@ def Index(request):
               'hero': hero,
               'menu': menu,
               'home': home,
+              'usercourses': studentcourses,
         } 
     )

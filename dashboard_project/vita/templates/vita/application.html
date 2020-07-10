@@ -1,7 +1,7 @@
 {% extends 'vitabase.html' %}
 
 {% block content %}
-<div class="card">
+<div class="card mx-md-3">
     <h2 class="card-title bg-primary text-center text-light">{{ user.first_name }} {{ user.last_name }}</h2>
     {% if application.submitted %}
         {% if application.rejected %}
@@ -48,5 +48,7 @@
         </div>
     </div>
 </div>
+
+<br>
 {% include 'ed/allcourses.html' %}
 {% endblock content %}

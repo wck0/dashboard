@@ -507,21 +507,24 @@ def ReplaceAppCourse(request, appcourse_id=None):
             return render(request, 'ed/editEDCourse.html', {})
     
     elif (appcourse_id is not None) and (request.method == 'POST'):
-        replacement_id = request.POST.get('replacement')
-        reason = request.POST.get('reason')
-        
-        appcourse = ApprovedCourse.objects.get(id=appcourse_id)
-        replacement = EDCourse.objects.get(id=replacement_id)
-        
-        if appcourse.student == user:
-            appcourse.replacement = replacement
-            appcourse.reason = reason
-            #some checking maybe?
-            appcourse.save()
+        try:
+            replacement_id = request.POST.get('replacement')
+            reason = request.POST.get('reason')
+            
+            appcourse = ApprovedCourse.objects.get(id=appcourse_id)
+            replacement = EDCourse.objects.get(id=replacement_id)
+            
+            if appcourse.student == user:
+                appcourse.replacement = replacement
+                appcourse.reason = reason
+                #some checking maybe?
+                appcourse.save()
 
+                return HttpResponseRedirect(reverse('ApprovedCourses'))
+            else:
+                return HttpResponseRedirect(reverse('Index'))
+        except:
             return HttpResponseRedirect(reverse('ApprovedCourses'))
-        else:
-            return HttpResponseRedirect(reverse('Index'))
 
     return HttpResponseRedirect(reverse('Index'))
 

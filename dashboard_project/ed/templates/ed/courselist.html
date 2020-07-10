@@ -1,6 +1,9 @@
 {% extends 'edbase.html' %}
 
 {% block content %}
+<div>
+    <a class="btn btn-primary" style="font-size: 20px;" href="{% url 'AddCourse' %}">Add a course</a>
+</div>
+<br>
 {% include 'ed/allcourses.html' %}
-<a class="btn btn-primary" href="{% url 'AddCourse' %}">Add a course</a>
 {% endblock content %}
