@@ -11,7 +11,6 @@ from siteconfig.models import HeroImage
 
 # TODO: class EducationalDesignTest(TestCase):
 # TODO: class APITest(TestCase):
-# TODO: class EditCourseTest(TestCase):
 # TODO: class AddCourseTest(TestCase):
 # TODO: class DeleteEDCourseTest(TestCase):
 # TODO: class ApprovedCourseListTest(TestCase):
@@ -345,9 +344,9 @@ class EditEDCourseTest(TestCase):
         
         biol = Subject.objects.get(short="BIOL")
         cellbio = Course.objects.get(subject=biol,
-                                         number="151",
-                                         title="Cell & Molecular Biology",
-                                        )
+                                     number="151",
+                                     title="Cell & Molecular Biology",
+                                    )
         
         payload = {'subject': biol.short or '',
                    'number': cellbio.number or '',
@@ -374,3 +373,53 @@ class EditEDCourseTest(TestCase):
         self.assertEqual(new_edcourse.course, cellbio)
         self.assertEqual(new_edcourse.term.code, 202009),
         self.assertEqual(new_edcourse.instructor, 'Kronholm')
+
+    def test_student_cannot_edit_others_edcourse(self):
+        test_student = User.objects.get(username='test_student')
+        other_student = User.objects.get(username='other_student')
+        logged_in = self.client.force_login(other_student)
+        
+        edcourse = EDCourse.objects.filter(student=test_student).first()
+        
+        engl = Subject.objects.get(short="ENGL")
+        self.assertEqual(edcourse.course.subject, engl)
+        whyread = Course.objects.get(subject=engl,
+                                     number="120",
+                                     title="Why Read?",
+                                    )
+        
+        
+        biol = Subject.objects.get(short="BIOL")
+        cellbio = Course.objects.get(subject=biol,
+                                         number="151",
+                                         title="Cell & Molecular Biology",
+                                        )
+        
+        payload = {'subject': biol.short or '',
+                   'number': cellbio.number or '',
+                   'title': cellbio.title or '',
+                   'term': '09',
+                   'year': '2020',
+                   'cr': edcourse.credits or '',
+                   'crn': edcourse.crn or '',
+                   'instructor': 'Kronholm' or '',
+                   'completed': int(edcourse.completed) or 0,
+                   'maj1': int(edcourse.maj1) or 0,
+                   'maj2': int(edcourse.maj2) or 0,
+                   'min1': int(edcourse.min1) or 0,
+                   'min2': int(edcourse.min2) or 0,
+                   'is_whittier': int(edcourse.is_whittier) or 0,
+                   'notes': edcourse.notes or '',
+                  }
+        response = self.client.post(reverse('editEDCourse')+str(edcourse.id),
+                                    payload,
+                                   )
+        # assertRedirects doesn't work right after POST?
+        redirect_path = reverse('Index')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+        
+        new_edcourse = EDCourse.objects.filter(student=test_student).first()
+        self.assertEqual(new_edcourse.course, whyread)
+        self.assertEqual(new_edcourse.term, None),
+        self.assertEqual(new_edcourse.instructor, None)

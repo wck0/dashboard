@@ -4,7 +4,7 @@ from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 from ed.models import *
 
-# TODO: relocate EDCourseForm to forms.py; update all references accordingly
+# TODO: relocate EDCourseForm to forms.py; update all references accordingly.
 
 class TermModelTest(TestCase):
     def test_saving_and_retrieving_terms(self):
