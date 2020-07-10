@@ -28,7 +28,7 @@ In addition, a number of environment variables will need to be set. They are as 
 
 Other variables in `poetfolio/settings.py` are hardcoded with values that make sense for Whittier College (like `LANGUAGE_CODE = 'en-us'` and `TIME_ZONE = 'America/Los_Angeles'`, etc.).
 
-Otherwise, see [https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/](https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/)
+Otherwise, see [https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/](https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/)
 
 # credits
 A great deal of work on this project was done by two Whittier Scholars Program students: Aaron Dodds ('19) and [Noah Wilson ('21)](https://noahwilson.scholars.domains/).
