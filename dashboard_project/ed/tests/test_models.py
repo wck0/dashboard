@@ -4,10 +4,7 @@ from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 from ed.models import *
 
-# TODO: class EDCourseModelTest(TestCase):
-# TODO: class ApprovedCourseModelTest(TestCase):
-# TODO: class EducationalGoalModelTest(TestCase):
-# TODO: relocate EDCourseForm to forms.py; update all references accordingly
+# TODO: relocate EDCourseForm to forms.py; update all references accordingly.
 
 class TermModelTest(TestCase):
     def test_saving_and_retrieving_terms(self):
@@ -296,6 +293,7 @@ class EDCourseModelTest(TestCase):
         student.username = "a student"
         student.set_password("secure password")
         student.save()
+        
         other_student = User()
         other_student.username = "another student"
         other_student.set_password("more secure password")
@@ -433,3 +431,416 @@ class EDCourseModelTest(TestCase):
         with self.assertRaises(IntegrityError):
             edcourse.save()
             edcourse.full_clean()
+
+class ApprovedCourseModelTest(TestCase):
+    def test_saving_and_retreiving_approvedcourse(self):
+        student = User()
+        student.name = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        other_student = User()
+        other_student.username = "another student"
+        other_student.set_password("more secure password")
+        other_student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = other_student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        approvedcourse = ApprovedCourse()
+        approvedcourse.student = student
+        approvedcourse.course = course
+        approvedcourse.term = edcourse.term
+        approvedcourse.credits = edcourse.credits
+        approvedcourse.completed = edcourse.completed
+        approvedcourse.crn = edcourse.crn
+        approvedcourse.instructor = edcourse.instructor
+        approvedcourse.maj1 = edcourse.maj1
+        approvedcourse.maj2 = edcourse.maj2
+        approvedcourse.min1 = edcourse.min1
+        approvedcourse.min2 = edcourse.min2
+        approvedcourse.is_whittier = edcourse.is_whittier
+        approvedcourse.notes = edcourse.notes    
+        approvedcourse.edcourseID = edcourse.id
+        approvedcourse.save()
+        
+        other_approvedcourse = ApprovedCourse()
+        other_approvedcourse.student = other_student
+        other_approvedcourse.course = other_course
+        other_approvedcourse.term = other_edcourse.term
+        other_approvedcourse.credits = other_edcourse.credits
+        other_approvedcourse.completed = other_edcourse.completed
+        other_approvedcourse.crn = other_edcourse.crn
+        other_approvedcourse.instructor = other_edcourse.instructor
+        other_approvedcourse.maj1 = other_edcourse.maj1
+        other_approvedcourse.maj2 = other_edcourse.maj2
+        other_approvedcourse.min1 = other_edcourse.min1
+        other_approvedcourse.min2 = other_edcourse.min2
+        other_approvedcourse.is_whittier = other_edcourse.is_whittier
+        other_approvedcourse.notes = other_edcourse.notes    
+        other_approvedcourse.edcourseID = other_edcourse.id
+        other_approvedcourse.save()
+        
+        all_approvedcourses = ApprovedCourse.objects.all()
+        self.assertEqual(all_approvedcourses.count(), 2)
+        
+        first_saved_approvedcourse = all_approvedcourses[0]
+        second_saved_approvedcourse = all_approvedcourses[1]
+        
+        self.assertEqual(first_saved_approvedcourse, approvedcourse)
+        self.assertEqual(second_saved_approvedcourse, other_approvedcourse)
+    
+    def test_approvedcourse_student_is_edcourse_student(self):
+        student = User()
+        student.name = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        approvedcourse = ApprovedCourse()
+        approvedcourse.student = student
+        approvedcourse.course = course
+        approvedcourse.term = edcourse.term
+        approvedcourse.credits = edcourse.credits
+        approvedcourse.completed = edcourse.completed
+        approvedcourse.crn = edcourse.crn
+        approvedcourse.instructor = edcourse.instructor
+        approvedcourse.maj1 = edcourse.maj1
+        approvedcourse.maj2 = edcourse.maj2
+        approvedcourse.min1 = edcourse.min1
+        approvedcourse.min2 = edcourse.min2
+        approvedcourse.is_whittier = edcourse.is_whittier
+        approvedcourse.notes = edcourse.notes    
+        approvedcourse.edcourseID = edcourse.id
+        approvedcourse.save()
+        
+        saved_approvedcourse = ApprovedCourse.objects.first()
+        self.assertEqual(saved_approvedcourse, approvedcourse)
+        
+        the_edcourse = EDCourse.objects.get(id=saved_approvedcourse.edcourseID)
+        self.assertEqual(the_edcourse.student, student)
+        
+    def test_cannot_save_approved_course_missing_student(self):
+        student = User()
+        student.name = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        approvedcourse = ApprovedCourse()
+        #approvedcourse.student = student # missing student
+        approvedcourse.course = course
+        approvedcourse.term = edcourse.term
+        approvedcourse.credits = edcourse.credits
+        approvedcourse.completed = edcourse.completed
+        approvedcourse.crn = edcourse.crn
+        approvedcourse.instructor = edcourse.instructor
+        approvedcourse.maj1 = edcourse.maj1
+        approvedcourse.maj2 = edcourse.maj2
+        approvedcourse.min1 = edcourse.min1
+        approvedcourse.min2 = edcourse.min2
+        approvedcourse.is_whittier = edcourse.is_whittier
+        approvedcourse.notes = edcourse.notes    
+        approvedcourse.edcourseID = edcourse.id
+        
+        with self.assertRaises(IntegrityError):
+            approvedcourse.save()
+            approvedcourse.full_clean()
+
+    def test_cannot_save_approved_course_missing_course(self):
+        student = User()
+        student.name = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        approvedcourse = ApprovedCourse()
+        approvedcourse.student = student
+        #approvedcourse.course = course # missing course
+        approvedcourse.term = edcourse.term
+        approvedcourse.credits = edcourse.credits
+        approvedcourse.completed = edcourse.completed
+        approvedcourse.crn = edcourse.crn
+        approvedcourse.instructor = edcourse.instructor
+        approvedcourse.maj1 = edcourse.maj1
+        approvedcourse.maj2 = edcourse.maj2
+        approvedcourse.min1 = edcourse.min1
+        approvedcourse.min2 = edcourse.min2
+        approvedcourse.is_whittier = edcourse.is_whittier
+        approvedcourse.notes = edcourse.notes    
+        approvedcourse.edcourseID = edcourse.id
+        
+        with self.assertRaises(IntegrityError):
+            approvedcourse.save()
+            approvedcourse.full_clean()
+
+    def test_cannot_save_approved_course_missing_credits(self):
+        student = User()
+        student.name = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        approvedcourse = ApprovedCourse()
+        approvedcourse.student = student
+        approvedcourse.course = course
+        approvedcourse.term = edcourse.term
+        #approvedcourse.credits = edcourse.credits # missing credits
+        approvedcourse.completed = edcourse.completed
+        approvedcourse.crn = edcourse.crn
+        approvedcourse.instructor = edcourse.instructor
+        approvedcourse.maj1 = edcourse.maj1
+        approvedcourse.maj2 = edcourse.maj2
+        approvedcourse.min1 = edcourse.min1
+        approvedcourse.min2 = edcourse.min2
+        approvedcourse.is_whittier = edcourse.is_whittier
+        approvedcourse.notes = edcourse.notes    
+        approvedcourse.edcourseID = edcourse.id
+        
+        with self.assertRaises(IntegrityError):
+            approvedcourse.save()
+            approvedcourse.full_clean()
+
+class EducationalGoalModelTest(TestCase):
+    def test_saving_and_retrieving_educationalgoal(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        educationalgoal = EducationalGoal()
+        educationalgoal.student = student
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        educationalgoal.save()
+        
+        educationalgoal.courses.add(edcourse)
+        educationalgoal.save()
+        
+        other_student = User()
+        other_student.username = "another student"
+        other_student.set_password("more secure password")
+        other_student.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = other_student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        other_educationalgoal = EducationalGoal()
+        other_educationalgoal.student = other_student
+        other_educationalgoal.title = "Achieve Equality"
+        other_educationalgoal.description = "We can dream..."
+        other_educationalgoal.save()
+        
+        other_educationalgoal.courses.add(other_edcourse)
+        other_educationalgoal.save()
+        
+        all_educationalgoals = EducationalGoal.objects.all()
+        self.assertEqual(all_educationalgoals.count(), 2)
+        
+        first_educationalgoal = all_educationalgoals[0]
+        second_educationalgoal = all_educationalgoals[1]
+        
+        self.assertEqual(first_educationalgoal, educationalgoal)
+        self.assertIn(edcourse, first_educationalgoal.courses.all())
+        self.assertEqual(second_educationalgoal, other_educationalgoal)
+        self.assertIn(other_edcourse, second_educationalgoal.courses.all())
+    
+    def test_can_save_many_edcourses_to_an_educationalgoal(self):
+        student = User()
+        student.username = "a student"
+        student.set_password("secure password")
+        student.save()
+        
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+        
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+        
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+        
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        other_edcourse = EDCourse()
+        other_edcourse.student = student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+        
+        educationalgoal = EducationalGoal()
+        educationalgoal.student = student
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        educationalgoal.save()
+        
+        educationalgoal.courses.add(edcourse)
+        educationalgoal.save()
+        educationalgoal.courses.add(other_edcourse)
+        educationalgoal.save()
+        
+        saved_educationalgoal = EducationalGoal.objects.first()
+        self.assertEqual(saved_educationalgoal, educationalgoal)
+        
+        self.assertEqual(saved_educationalgoal.courses.count(), 2)
+        self.assertIn(edcourse, saved_educationalgoal.courses.all())
+        self.assertIn(other_edcourse, saved_educationalgoal.courses.all())
+    
+    def test_cannot_save_empty_educationalgoal(self):
+        educationalgoal = EducationalGoal()
+        
+        with self.assertRaises(IntegrityError):
+            educationalgoal.save()
+            educationalgoal.full_clean()
+            
+    def test_cannot_save_educationalgoal_without_student(self):
+        educationalgoal = EducationalGoal()
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        
+        with self.assertRaises(IntegrityError):
+            educationalgoal.save()
+            educationalgoal.full_clean()

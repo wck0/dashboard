@@ -13,7 +13,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,51 +52,46 @@ def EDIndex(request):
            )
 
 #Displays statistics for divisions, departments, and subjects
-def Stats(request):
+#def Stats(request):
 
-    usrgrp = request.user.groups.all()
-    total = Course.numcourses()
+#    usrgrp = request.user.groups.all()
+#    total = Course.numcourses()
 
-    divisions = Division.objects.all()
-    divcounts = []
-    divpercent = []
-    for div in divisions:
-        divcounts.append(div.numcourses())
-        divpercent.append(div.perccourses())
+#    divisions = Division.objects.all()
+#    divcounts = []
+#    divpercent = []
+#    for div in divisions:
+#        divcounts.append(div.numcourses())
+#        divpercent.append(div.perccourses())
 
-    departments = Department.objects.all()
-    deptcounts = []
-    deptpercent = []
-    for dept in departments:
-        deptcounts.append(dept.numcourses())
-        deptpercent.append(dept.perccourses())
+#    departments = Department.objects.all()
+#    deptcounts = []
+#    deptpercent = []
+#    for dept in departments:
+#        deptcounts.append(dept.numcourses())
+#        deptpercent.append(dept.perccourses())
 
-    subjects = Subject.objects.all()
-    subjcounts = []
-    subjpercent = []
-    for subj in subjects:
-        subjcounts.append(subj.numcourses())
-        subjpercent.append(subj.perccourses())
+#    subjects = Subject.objects.all()
+#    subjcounts = []
+#    subjpercent = []
+#    for subj in subjects:
+#        subjcounts.append(subj.numcourses())
+#        subjpercent.append(subj.perccourses())
 
-    return render(request, 'ed/stats.html', {"pagename": "Stats",
-                                             'total': total,
-                                             'divisions': divisions,
-                                             'divcounts': divcounts,
-                                             'divpercent': divpercent,
-                                             'departments': departments,
-                                             'deptcounts': deptcounts,
-                                             'deptpercent': deptpercent,
-                                             'subjects': subjects,
-                                             'subjcounts': subjcounts,
-                                             'subjpercent': subjpercent,
-                                             'hero': hero,
-                                            }
-                 )
-
-#Page to let user log in to account to access more parts of the site
-def WSPLogin(request):
-
-    return render(request, 'edbase.html', {"pagename": "Login Page"})
+#    return render(request, 'ed/stats.html', {"pagename": "Stats",
+#                                             'total': total,
+#                                             'divisions': divisions,
+#                                             'divcounts': divcounts,
+#                                             'divpercent': divpercent,
+#                                             'departments': departments,
+#                                             'deptcounts': deptcounts,
+#                                             'deptpercent': deptpercent,
+#                                             'subjects': subjects,
+#                                             'subjcounts': subjcounts,
+#                                             'subjpercent': subjpercent,
+#                                             'hero': hero,
+#                                            }
+#                 )
 
 #JavaScript API for AddEDCourse page
 #use parent or div thing with js in template
@@ -121,7 +116,7 @@ def API(request, subj='', num=''):
         else:
             if num:
                 #number given but not subj, likely malicious
-                HttpResponseRedirect(reverse('Index'))
+                redirect(reverse('Index'))
             #no subj and no num, return json of subjects
             return JsonResponse([], safe=False)
 
@@ -313,8 +308,8 @@ def ApproveED(request):
             vitaStudent.EDmeeting_complete = True
             vitaStudent.save()
 
-            return HttpResponseRedirect(reverse('ApprovedCourses')+student.username) 
+            return redirect(reverse('ApprovedCourses')+student.username) 
     else:
-        return HttpResponseRedirect(reverse('Index'))
+        return redirect(reverse('Index'))
     #except:
-    #    return HttpResponseRedirect(reverse('Index'))
+    #    return redirect(reverse('Index'))
