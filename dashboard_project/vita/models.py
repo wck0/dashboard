@@ -66,6 +66,39 @@ class Application(models.Model):
     def __repr__(self):
         return str(self.user.first_name) + " " + self.user.last_name + "<Application>"
 
+class OffCampusExperience(models.Model):
+    UNDECIDED = 'UD'
+    INTERNSHIP = 'INT'
+    COMMUNITY = 'CBL'
+    ABROAD = 'STA'
+    RESEARCH = 'REU'
+    OTHER = 'OTR'
+    EXPERIENCE_TYPE = (
+        (UNDECIDED, "Undecided"),
+        (INTERNSHIP, "Internship"),
+        (COMMUNITY, "Community-Based Learning"),
+        (ABROAD, "Study Abroad"),
+        (RESEARCH, "Research Esperience for Undergraduates"),
+        (OTHER, "Other"),
+    )
+
+    Y = 'Yes'
+    N = 'No'
+    BOOLEAN_ANSWER = (
+        (Y, 'Yes'),
+        (N, 'No'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    experince_type  = models.CharField(max_length=3, choices=EXPERIENCE_TYPE, default="UD")
+    approved  = models.CharField(max_length=3, choices=BOOLEAN_ANSWER, default="No")
+    completed  = models.CharField(max_length=3, choices=BOOLEAN_ANSWER, default="No")
+    council_notes = RichTextField(blank=True, null=True)
+    reflection =  RichTextField(blank=True, null=True)
+
+    def __str__(self):
+        return str(self.user) + "'s experince"
+    
 class Menu_item(models.Model):
     title = title = models.CharField(max_length=60)
     subtitle = models.CharField(max_length=120)
@@ -82,4 +115,3 @@ class Home_page(models.Model):
     publish_date = models.DateTimeField('Published',
                                         default=timezone.now,
                                        )
-   

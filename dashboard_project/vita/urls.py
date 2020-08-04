@@ -9,5 +9,7 @@ urlpatterns = [
     path('info/<str:username>', views.Info),
     path('application/', views.ApplicationView, name='VitaApplication'),
     path('application/<str:username>', views.ApplicationView),
+    path('offcampus/', views.OffCampus, name='VitaOffCampus'),
+    path('offcampus/<str:username>', views.OffCampus),
 ]
 

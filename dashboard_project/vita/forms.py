@@ -42,3 +42,20 @@ class ApplicationFeedbackForm(forms.ModelForm):
         model = Application
         fields = ('feedback',
                  )
+
+class OffCampusReflectForm(forms.ModelForm):
+    reflection = forms.CharField(widget=CKEditorWidget())
+    class Meta:
+        model = OffCampusExperience
+        fields = ('experince_type',
+                  'completed',
+                'reflection',
+                 )
+
+class OffCampusCouncilNotesForm(forms.ModelForm):
+    council_notes = forms.CharField(widget=CKEditorWidget())
+    class Meta:
+        model = OffCampusExperience
+        fields = ('approved',
+                  'council_notes',
+                 )
