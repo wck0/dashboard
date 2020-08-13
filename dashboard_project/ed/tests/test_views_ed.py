@@ -13,9 +13,9 @@ from siteconfig.models import HeroImage
 # TODO: class EDTest(TestCase):
 # TODO: class ApproveEDTest(TestCase):
 
+
 class EDIndexTest(TestCase):
     def test_uses_landingpage_template(self):
         response = self.client.get(reverse(EDIndex))
-        
-        self.assertTemplateUsed(response, 'ed/landingpage.html')
 
+        self.assertTemplateUsed(response, 'ed/landingpage.html')
