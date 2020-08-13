@@ -1,10 +1,15 @@
 {% load ed_extras %}
 
-<div class="card">
-    <h2 class="card-title bg-primary text-light text-center z-depth-1-half">Educational Goals</h2>
-    <div class="card-body">
-        {% for edgoal in edgoals %}
-	<h4 class="card-title bg-secondary text-light text-center z-depth-1-half">{{ edgoal.title }}{% if request.user|has_group:"Student" %}<a href="{%url 'EditGoal' %}{{ edgoal.id }}">(edit)</a>{% endif %}</h4>
+<div>
+    {% for edgoal in edgoals %}
+    <div class="card mb-3">
+        <h2 class="card-title bg-primary text-light text-center py-md-1">
+            {{ edgoal.title }}
+            {% if request.user|has_group:"Student" %}
+                <a href="{%url 'EditGoal' %}{{ edgoal.id }}">(edit)</a>
+            {% endif %}
+        </h2>
+        <div class="card-body">
             </br>
             <div class="goaldescription">
                 {{ edgoal.description }}
@@ -38,6 +43,7 @@
                     $('#Goal{{ forloop.counter }}Table').DataTable({paging: false});
                 });
             </script>
-        {% endfor %}
+        </div>
     </div>
+    {% endfor %}
 </div>

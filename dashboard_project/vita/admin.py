@@ -54,12 +54,38 @@ class ApplicationAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(user=request.user)
 
+@admin.register(OffCampusExperience)
+class OffCampusExperienceAdmin(admin.ModelAdmin):
+    search_fields = ['user__username',
+                     'user__first_name', 'user__last_name',
+                     'essay',
+                    ]
+    
+    list_display = (
+            'user',
+            'experince_type',
+            'approved',
+            'completed',
+            )
+
+    list_filter = (
+            'experince_type',
+            'approved',
+            'completed',
+            )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
+
 @admin.register(Menu_item)
-class Menu_itemAdmin(admin.ModelAdmin):
+class MenuIitemAdmin(admin.ModelAdmin):
     list_display = ('title','order')
     ordering = ('order',)
     
 @admin.register(Home_page)
-class Home_page(admin.ModelAdmin):
+class HomePage(admin.ModelAdmin):
     list_display = ('publish_date',)
     ordering = ('publish_date',)

@@ -1,22 +1,24 @@
 {% extends "edbase.html" %}
 
-{% block content %} 
-<h2>Add a New Goal</h2>
-<form method="post" action="{% url 'AddGoal' %}">{% csrf_token %}
-    {% for field in form %}
-    <div class="row">
-        <div class="col">
-            {{ field.label_tag }}
+{% block content %}
+<div class="card">
+    <h2 class="card-title bg-primary text-light text-center py-md-1">Add a New Goal</h2>
+    <form class="p-3" method="post" action="{% url 'AddGoal' %}">{% csrf_token %}
+        {% for field in form %}
+        <div class="row">
+            <div class="col">
+                {{ field.label_tag }}
+            </div>
+            <div class="col">
+                {{ field }}
+            </div>
         </div>
-        <div class="col">
-            {{ field }}
-        </div>
-    </div>
-    {% endfor %}
-    <button class="btn btn-primary" type="submit">
-        Submit
-    </button>
-</form>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">
+            Submit
+        </button>
+    </form>
+</div>
 </br>
 {% include "ed/EDGoals.html" %}  
 {% endblock content %}

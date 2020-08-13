@@ -6,11 +6,11 @@
         <table id="WSPTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
             <tr>
-                <td id="Desktop">CRN</td>
+                <td class="desktop">CRN</td>
                 <td>Subject</td>
-                <td id="Desktop">Number</td>
+                <td class="desktop">Number</td>
                 <td>Title</td>
-                <td id="Desktop">Term</td>
+                <td class="desktop">Term</td>
                 {% if request.user|has_group:"Student" %}
 		        <td></td>
                 {% elif  request.user|has_group:"Director" %}
@@ -21,27 +21,27 @@
             <tbody>
             {% for course in wspcourses %}
             <tr>
-                <td id="Desktop">
+                <td class="desktop">
                     {{ course.crn }}
                 </td>
                 <td>
                     {{ course.course.subject.short }}
                 </td>
-                <td id="Desktop">
+                <td class="desktop">
                     {{ course.course.number }}
                 </td>
                 <td>
                     {{ course.course.title }}
                 </td>
-                <td id="Desktop">
+                <td class="desktop">
                     {{ course.term }}
                 </td>
 		{% if request.user|has_group:"Student" %}
-		<td>
+        <td style="width: 90px;">
 			{% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
 		</td>
         {% elif request.user|has_group:"Director" %}
-        <td>
+        <td style="width: 90px;">
             <input type="checkbox" form="approve" id="{{ course }}" name="{{ course }}" value="True" checked>
         </td>
 		{% endif %}

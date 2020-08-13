@@ -1,4 +1,5 @@
-{% include "edbase.html" %}
+{% extends "edbase.html" %}
+
 {% block content %}
 <form method="post" action="{% url target %}">{% csrf_token %}
     <label for="studentid">Select a student</label>
@@ -15,4 +16,5 @@
         Submit
     </button>
 </form>
-{% endblock %}
+{% endblock content %}
+

@@ -1,8 +1,12 @@
-{% extends 'edbase.html' %}
+{% extends "edbase.html" %}
 
 {% block content %}
-{% include 'ed/EDGoals.html' %}
 <div>
-    <a href="{% url 'AddGoal' %}" class="btn btn-primary">Add A Goal</a>
+<a href="{% url 'AddGoal' %}" class="btn btn-primary" style="font-size: 20px;">Create Goal</a>
 </div>
+<br>
+{% include 'ed/EDGoals.html' %}
 {% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

@@ -1,4 +1,5 @@
-<ul class="dropdown-menu">
-    <a class="nav-link btn btn-primary text-light" href="{% url 'VitaInfo' %}">Student Information</a>
-    <a class="nav-link btn btn-primary text-light" href="{% url 'VitaApplication' %}">Applications</a>
-</ul>
+{% load ed_extras %}
+
+<a class="btn menu-btn child-btn z-depth-0" href="{% url 'VitaInfo' %}">Student Information</a>
+<a class="btn menu-btn child-btn z-depth-0" href="{% url 'VitaApplication' %}">Applications</a>
+<a class="btn menu-btn child-btn z-depth-0" href="{% url 'VitaOffCampus' %}">Off Campus Experiences</a>

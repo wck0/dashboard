@@ -1,16 +1,16 @@
 {% load ed_extras %}
 <div class="card">
     <h2 class="card-title bg-primary text-light text-center z-depth-1-half">Supporting Courses</h2>
-    {% if support %}
     <div class="card-body">
-        <table id="SupportTable" class="table table-striped table-bordered" style="width:100%">
+    {% if support %}
+        <table id="SupportTable" class="table table-striped table-bordered" style="wclassth:100%">
             <thead>
             <tr>
-                <td id="desktop">CRN</td>
+                <td class="desktop">CRN</td>
                 <td>Subject</td>
-                <td id="tablet">Number</td>
+                <td class="tablet">Number</td>
                 <td>Title</td>
-                <td id="desktop">Term</td>
+                <td class="desktop">Term</td>
                 {% if request.user|has_group:"Student" %}
                 <td></td>
                 {% elif  request.user|has_group:"Director" %}
@@ -21,27 +21,27 @@
             <tbody>
             {% for course in support %}
                 <tr>
-                    <td id="desktop">
+                    <td class="desktop">
                         {{ course.crn }}
                     </td>
                     <td>
                         {{ course.course.subject.short }}
                     </td>
-                    <td id="tablet">
+                    <td class="tablet">
                         {{ course.course.number }}
                     </td>
                     <td>
                         {{ course.course.title }}
                     </td>
-                    <td data-order="{{ course.term.code }}" id="desktop">
+                    <td data-order="{{ course.term.code }}" class="desktop">
                         {{ course.term }}
                     </td>
                     {% if request.user|has_group:"Student" %}
-                    <td>
+                    <td style="width: 90px">
                         {% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
                     </td>
                     {% elif request.user|has_group:"Director" %}
-                    <td>
+                    <td style="width: 90px">
                         <input type="checkbox" form="approve" id="{{ course }}" name="{{ course }}" value="True" checked>
                     </td>
                     {% endif %}
@@ -53,6 +53,6 @@
             {% include "ed/tablesettings.html" %}
         {% endwith %}
         <h4>{{ support.total }} Credits ({{ support.earned }} earned)</h4>
-    </div>
     {% endif %}
+    </div>
 </div>

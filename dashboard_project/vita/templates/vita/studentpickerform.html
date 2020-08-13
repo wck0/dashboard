@@ -1,4 +1,4 @@
-{% include "vitabase.html" %}
+{% extends "vitabase.html" %}
 {% block content %}
 <form method="post" action="{% url target %}">{% csrf_token %}
     <label for="studentid">Select a student</label>

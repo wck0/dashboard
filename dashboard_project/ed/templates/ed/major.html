@@ -8,11 +8,11 @@
         <table id="Major1Table" class="table table-striped table-bordered" style="width:100%">
             <thead>
             <tr>
-                <td id="desktop">CRN</td>
+                <td class="desktop">CRN</td>
                 <td>Subject</td>
-                <td id="tablet">Number</td>
+                <td class="tablet">Number</td>
                 <td>Title</td>
-                <td id="desktop">Term</td>
+                <td class="desktop">Term</td>
                 {% if request.user|has_group:"Student" %}
                 <td></td>
                 {% elif  request.user|has_group:"Director" %}
@@ -23,27 +23,27 @@
             <tbody>
             {% for course in major1 %}
                 <tr>
-                    <td id="desktop">
+                    <td class="desktop">
                         {{ course.crn }}
                     </td>
                     <td>
                         {{ course.course.subject.short }}
                     </td>
-                    <td id="tablet">
+                    <td class="tablet">
                         {{ course.course.number }}
                     </td>
                     <td>
                         {{ course.course.title }}
                     </td>
-                    <td data-order="{{ course.term.code }}" id="desktop">
+                    <td data-order="{{ course.term.code }}" class="desktop">
                         {{ course.term }}
                     </td>
                     {% if request.user|has_group:"Student" %}
-                    <td>
+                    <td style="width: 90px;">
                         {% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
                     </td>
                     {% elif request.user|has_group:"Director" %}
-                    <td>
+                    <td style="width: 90px;">
                         <input type="checkbox" form="approve" id="{{ course }}" name="{{ course }}" value="True" checked>
                     </td> 
                     {% endif %}
@@ -64,11 +64,11 @@
         <table id="Major2Table" class="table table-striped table-bordered" style="width:100%">
             <thead>
             <tr>
-                <td id="desktop">CRN</td>
+                <td class="desktop">CRN</td>
                 <td>Subject</td>
-                <td id="tablet">Number</td>
+                <td class="tablet">Number</td>
                 <td>Title</td>
-                <td id="desktop">Term</td>
+                <td class="desktop">Term</td>
                 {% if request.user|has_group:"Student" %}
                 <td></td>
                 {% elif  request.user|has_group:"Director" %}
@@ -79,27 +79,27 @@
             <tbody>
                 {% for course in major2 %}
                 <tr>
-                    <td id="desktop">
+                    <td class="desktop">
                         {{ course.crn }}
                     </td>
                     <td>
                         {{ course.course.subject.short }}
                     </td>
-                    <td id="tablet">
+                    <td class="tablet">
                         {{ course.course.number }}
                     </td>
                     <td>
                         {{ course.course.title }}
                     </td>
-                    <td data-order="{{ course.term.code }}" id="desktop">
+                    <td data-order="{{ course.term.code }}" class="desktop">
                         {{ course.term }}
                     </td>
                     {% if request.user|has_group:"Student" %}
-                    <td>
+                    <td style="width: 90px;">
                         {% include 'ed/editcoursebutton.html' %}{% include 'ed/deletecoursebutton.html' %}
                     </td>
                     {% elif request.user|has_group:"Director" %}
-                    <td>
+                    <td style="width: 90px;">
                         <input type="checkbox" form="approve" id="{{ course }}" name="{{ course }}" value="True" checked>
                     </td>
                     {% endif %}

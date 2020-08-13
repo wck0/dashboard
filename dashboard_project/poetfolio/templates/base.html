@@ -12,6 +12,7 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 	    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         
         <link rel="stylesheet" type="text/css" href="{% static 'ed/style.css' %}">
         
@@ -27,183 +28,269 @@
         <meta name="theme-color" content="#ffffff">
     </head>
     <body>
+        {#  Dark Overlay element #}
+        <a id="sidebarCollapse"><div id="overlay"></div></a> 
+       
+        {# Hero image Block #}
+        <div id="hero">
         {% block hero %}
-             <div class="hero-image" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ hero.hero.url }}');">
+         <div class="hero-image" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ hero.hero.url }}');">
               <div class="hero-text">
-                <h1>Whittier Scholars Dashboard</h1>
-                <p>Design Your Education{% if user.is_authenticated %},             {{ request.user.get_full_name }}{% endif %}</p>
+                    <h1>Whittier Scholars Dashboard</h1>
+                    <p>Design Your Education{% if user.is_authenticated %},             {{ request.user.get_full_name }}{% endif %}</p>
               </div>
-            </div> 
-        {% endblock hero %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="mx-auto order-1">      
-	    <a class="navbar-brand mx-auto btn" href="{% url 'Index' %}">Home</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="navbar-collapse collapse w-100 order-2 order-lg-0 dual-collapse2">
-        <ul class="navbar-nav mr-auto">
-            
-            {# Admin menu #}
-            {% if request.user|has_group:"WSP Staff" or request.user|has_group:"Director" %}
-            <li class="nav-item dropdown">
-                <a id="menu-btn0" type="button" class="btn btn-primary btn-lg text-light collapsible" data-toggle="collapse" href="menu0">Admin</a>
-                <div class="collapse" id="menu0">
-                    <ul style="padding-left:1%;"> 
-                        <a class="nav-link btn btn-menu text-light" href="{% url 'admin:index' %}">Admin</a>
-                        <a class="nav-link btn btn-menu text-light" href="{% url 'EnterStudents' %}">Enter Students</a>
-                    </ul>
-                </div>
-                {# dropdown menu in siteconfig/templates #}
-                {% include 'siteconfig/dropdownmenu.html' %}
-            </li> 
-            {% endif %} 
-            
-            {# My story menu #} 
-            <li class="nav-item dropdown">
-                <a id="menu-btn1" type="button" class="btn btn-primary btn-lg text-light collapsible" data-toggle="collapse"  href="#menu1">My Story</a>
-                <div class="collapse" id="menu1"> 
-                    <ul style="padding-left:1%;">
-                        <a class="nav-link btn btn-menu text-light" href="{% url  'VitaNarrative' %}">My Story</a>
-                        {# Button specific to student #}
-                        {% if request.user|has_group:"Student" %}
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'VitaInfo' %}">Student Account</a>
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'VitaApplication' %}">Application</a>
-                        {# Buttons specific to staff #}
-                        {% elif request.user|has_group:"WSP Staff" or  request.user|has_group:"Council" or request.user|has_group:"Director" %}
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'VitaInfo' %}">Student Information</a>
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'VitaApplication' %}">Applications</a>
-                        {% endif %} 
-                    </ul>
-                </div>
-                {# Dropdown menu in vita/templates #}
-                {% include 'vita/vitadropdown.html' %}
-            </li>
-            
-            {# My plan menu #}
-            <li class="nav-item dropdown">
-                <a id="menu-btn2"type="button" class="btn btn-primary btn-lg text-light collapsible" data-toggle="collapse"  href="#menu2">My Plan</a>
-                <div class="collapse" id="menu2">
-                    <ul style="padding-left:1%;">
-                        <a class="nav-link btn btn-menu text-light" href="{% url 'ED' %}">My Plan</a>
-                        {# Buttons specific to student #}
-                        {% if request.user|has_group:"Student" %}
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'MajorMinor' %}">Major/Minor</a>
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'AllGoals' %}">Goals</a>
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'CourseList' %}">Courses</a>
-                        {# Buttons specific to staff #}
-                        {% elif request.user|has_group:"WSP Staff" or request.user|has_group:"Council" or request.user|has_group:"Director" %}
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'CourseList' %}">Course List</a>
-                            <a class="nav-link btn btn-menu text-light" href="{% url 'ED' %}">Student Meetings</a>
-                        {% endif %} 
-                    </ul> 
-                </div>
-                {# Dropdown menu in ed/templates #}
-                {% include 'ed/eddropdown.html' %}
-            </li>          
-            
-            {# My data menu #}
-            <li id="menu-btn3" class="nav-item dropdown">
-                <a class="btn btn-primary btn-lg text-light collapsible" href="{% url 'ReportsIndex' %}">My Data</a>
-                <div class="content">
-                </div>
-                {# Dropdown menu from reports/templates #}
-                {#{% include 'reports/reportsdropdown.html' %}#}
-            </li>
-        </ul>
-    </div>
-    
-    {# Login button #}
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-            {% if user.is_authenticated %}
-            <a class="nav-link btn btn-primary text-light" href="{% url 'logout' %}?next={% firstof request.path '/' %}">logout</a>
-            {% else %}
-            <a class="nav-link btn btn-primary text-light" href="{% url 'login' %}?next={% firstof request.path '/' %}">login</a>
-            {% endif %}
-            </li>
-        </ul>
-    </div>
-</nav>
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        <h1 align="center">{{ pagename }}</h1>
-        <div id="content">
-            {% block content %}
-            <div class="row justify-content-center" style="margin: auto">
-                <div class="col-lg-5 bg-light">
-                    {% for menu_item in menu %}
-                    <a href="{{ menu_item.link }}">
-                        <div class="media center">
-                           <div class="media-body right" align="right" style="color: #490F75">
-                                <h4 class="media-heading"> {{ menu_item.title }}</h4>
-                                <p> {{ menu_item.subtitle }} </p>
-                            </div>
-                            <div class="media-right">
-                                {% if menu_item.thumbnail %}
-                                <img src='{{ menu_item.thumbnail.url }}' class="media-object thumbnail" style="width:60px">
-                                {% endif %}
-                            </div>
-                        </div>
+        </div> 
+        {% endblock hero %} 
+         </div>
+
+        {# Top bar #}
+        <div class="container-fluid px-0">
+            <nav id="navbar" class="color-primary z-depth-1">
+                <div>
+                    <button type="button" id="sidebarOpen" class="btn color-primary z-depth-0">
+                            <span class="material-icons">menu</span>
+                    </button>
+                    {% if user.is_authenticated %}
+                    <a type="button" id="logout" class="btn color-primary z-depth-0" href="{% url 'logout' %}?next={% firstof request.path '/' %}">
+                        <span class="material-icons">login</span>
                     </a>
-                    {% endfor %}    
+                    {% else %}
+                    <a type="button" id="logout" class="btn color-primary z-depth-0" href="{% url 'login' %}?next={% firstof request.path '/' %}">
+                        <span class="material-icons">login</span>
+                    </a>
+                    {% endif %}
                 </div>
-                <div class="col-lg-auto" style="padding-top: 20px"></div>
-                <div class="col-lg-5 bg-light">
-                    <div class="row">
-                        {% if home.image %}
-                        <img src='{{ home.image.url }}' class="center" style="width:80%">
-                        {% endif %}
-                    </div>
-                    <div class="row">
-                        {% if home.text %}
-                        <div class="col center">
-                            <p> {{ home.text|safe }} </p>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
- 
-            </div>
-            {% endblock content %}
+                <h2 id="top-title"><strong>{{ pagename }}</strong></h2>
+            </nav>
         </div>
 
+
+        {# Wrapper container #}
+        <div class="container-fluid wrapper my-3">
+            
+            {# Side-Nav bar #}
+            <nav id="sidebar" class="z-depth-2">
+                
+                {# Sid-Nav Header #}
+                <div id="nav-menu">
+                    <div>
+                        <h3><strong>
+                            {% if user.is_authenticated %}
+                                {{ request.user.get_full_name }}
+                            {% else %}
+                                Welcome
+                            {% endif %}
+                        </strong></h3>
+                        <p>
+                            {% if user.is_authenticated %}
+                                {{ request.user.email }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <hr>
+                    <ul class="list-unstyled components">
+                        
+                        {# Home #}
+                        <li>
+                            <a type="button" class="btn menu-btn parent-btn z-depth-0" href="{% url 'Index' %}">
+                                <span class="material-icons">home</span> Home
+                            </a>
+                        </li>
+                        
+                        {# Admin menu #}
+                        {% if request.user|has_group:"WSP Staff" or request.user|has_group:"Director" %}
+                        <li>
+                            <a type="button" class="btn menu-btn collapsible parent-btn dropdown-toggle z-depth-0" data-toggle="collapse" aria-expanded="false" href="#admin-menu">
+                                <span class="material-icons">settings</span> Admin
+                            </a>
+                            <ul class="collapse" id="admin-menu">
+                                {% include 'siteconfig/dropdownmenu.html' %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                        
+                        {# My Story menu #}
+                        <li>
+                            <a type="button" class="btn menu-btn parent-btn collapsible dropdown-toggle z-depth-0" data-toggle="collapse" aria-expanded="false" href="#my_story-menu">
+                                <span class="material-icons">face</span> My Story
+                            </a>
+                            <ul class="collapse" id="my_story-menu">
+                                {% include 'vita/vitadropdown.html' %}
+                            </ul>
+                        </li>
+                        
+                        {# My Plan menu #}
+                        <li>
+                            <a type="button" class="btn menu-btn parent-btn collapsible dropdown-toggle z-depth-0" data-toggle="collapse" aria-expanded="false" href="#my_plan-menu">
+                                <span class="material-icons">explore</span> My Plan
+                            </a>
+                            <ul class="collapse" id="my_plan-menu">
+                                {% include 'ed/eddropdown.html' %}
+                            </ul>
+                        </li> 
+
+                        {# My Data menu #}
+                        <li>
+                            <a type="button" class="btn menu-btn parent-btn z-depth-0" style="width:275px;" href="{% url 'ReportsIndex' %}">
+                                <span class="material-icons">bar_chart</span> My Data
+                            </a>
+                        </li>
+                        <hr>
+                        
+                        {# Log out #}
+                        <li>
+                            {% if user.is_authenticated %}
+                            <a type="button" class="btn menu-btn parent-btn z-depth-0" href="{% url 'logout' %}?next={% firstof request.path '/' %}">
+                                <span class="material-icons">login</span> logout
+                            </a>
+                            {% else %}
+                            <a type="button" class="btn menu-btn parent-btn z-depth-0" href="{% url 'login' %}?next={% firstof request.path '/' %}">
+                                <span class="material-icons">login</span> login
+                            </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </nav>                       
+       
+
+        {# Content #}
+        <div id="content">
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+            {% block content %}
+            
+            <div class="row mx-md-2">
+                {# Left card #}
+                <div class="col">
+                    
+                    <div class="card mb-3">
+                        <img class="card-img-top" src='{{ home.image.url }}'>
+                        <div class="col card-body" style="text-align: center;">
+                            <p> {{ home.text|safe }} </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                {# Right card #}
+                <div class="col">
+                    
+                    {# Right Progress donut #}
+                    {% if request.user|has_group:"Student" %}
+                    <div class="card mb-3 pt-4">
+                        <canvas id="credit-total"></canvas>
+                        <h3 class="homepage-item pb-3">
+                            {% if usercourses.total < 120 %}
+                                <strong>{{ usercourses.earned }}</strong> credits earned out of 120
+                            {% else %}
+                                <strong>{{ usercourses.earned }}</strong> credits earned out of{{ usercourses.total }}
+                            {% endif %}
+                        </h3>
+
+                    </div>
+                    {% endif %}
+
+                    {# Right link menu #}
+                    <div class="card py-md-3 pt-3">
+                        {% for menu_item in menu %}
+                        <a href="{{ menu_item.link }}">
+                            <div class="media homepage-item">
+                                 <div class="media-left">
+                                    <img src='{{ menu_item.thumbnail.url }}' class="media-object thumbnail z-depth-1" style="width:60px">
+                                </div>
+                                <div class="media-body left" align="left" style="color: #490F75">
+                                    <h4 class="media-heading">
+                                        <strong> {{ menu_item.title }}</strong>
+                                    </h4>
+                                    <p> {{ menu_item.subtitle }} </p>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}    
+                    </div>
+                    
+                </div>
+            </div>
+            <br>
+            <div></div>
+            {% endblock content %}
+        </div>
 
          <!-- Java script files for  Material Design for Bootstrap -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.16/js/mdb.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
         <script>
-        // activate drop down menus win full screen mode
-        function checkwidth(x) {
-            if (x.matches) {
-                 // if on desktop
-                 {% if request.user|has_group:"WSP Staff" or request.user|has_group:"Director" %}
-                 document.getElementById("menu-btn0").setAttribute("href", "{% url 'admin:index' %}");
-                 document.getElementById("menu-btn0").removeAttribute("data-toggle");
-                 {% endif %}
-                 document.getElementById("menu-btn1").setAttribute("href", "{% url 'VitaNarrative' %}");
-                 document.getElementById("menu-btn1").removeAttribute("data-toggle");
-                 document.getElementById("menu-btn2").setAttribute("href", "{% url 'ED' %}");
-                 document.getElementById("menu-btn2").removeAttribute("data-toggle");
-            } else {
-                 //if on mobile
-                 {% if request.user|has_group:"WSP Staff" or request.user|has_group:"Director" %}
-                 document.getElementById("menu-btn0").setAttribute("href", "#menu0");
-                 document.getElementById("menu-btn0").setAttribute("data-toggle", "collapse");
-                 {% endif %}
-                 document.getElementById("menu-btn1").setAttribute("href", "#menu1");
-                 document.getElementById("menu-btn1").setAttribute("data-toggle", "collapse");
-                 document.getElementById("menu-btn2").setAttribute("href", "#menu2");
-                 document.getElementById("menu-btn2").setAttribute("data-toggle", "collapse");
-            }
-        }
         
-        var x = window.matchMedia("(min-width: 769px)"); // stores a vaule to represent whether or not it's on a desktop in "x"
-        checkwidth(x) // runs the fucntion to change to desktop or mobile mode
-        x.addListener(checkwidth) //sets up an event listener to watch when x changes and run "checkwidth" if it does
+        // Sticky title bar
+        window.onscroll = function() {stickyFunction()};
+        // Get the navbar
+        var navbar = document.getElementById("navbar");
+        // Get the offset position of the navbar
+        var sticky = navbar.offsetTop;
+        // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+        function stickyFunction() {
+          if (window.pageYOffset >= sticky) {
+            navbar.classList.add("sticky")
+          } else {
+            navbar.classList.remove("sticky");
+          }
+        }
+
+        // Toggeling the overlay and opening the nav-drawer
+        $(document).ready(function () {
+            $('#sidebarOpen').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                document.getElementById("overlay").style.display = "block";
+                document.getElementById("overlay").style.opacity = "1";
+            });
+
+        });              
+        
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("overlay").style.opacity = "0";
+                
+                // close dropdowns
+                $('.collapse').collapse('hide');
+                // and also adjust aria-expanded attributes we use for the open/closed arrows
+                // in our CSS
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+
+            });
+
+        });
 
         {% block javascript %} 
+        {% if request.user|has_group:"Student" %}
+        const None = 0; // If the python returns None, the javascript will read that as zero
+        function donut(ID, earned, total) {
+            var ctxD = document.getElementById(ID).getContext('2d');
+            var myLineChart = new Chart(ctxD, {
+            type: 'doughnut',
+            data: {
+            labels: ["Complete", "Incomplete"],
+            datasets: [{
+            data: [ earned,  total - earned],
+            backgroundColor: ["#6f42c1", "#c7c7c7"], 
+            }]
+            },
+            options: {
+            responsive: true
+            }
+            });
+        }
+        
+        {% if usercourses.total < 120 %}
+            donut("credit-total", {{ usercourses.earned }}, 120)
+        {% else %}
+            donut("credit-total", {{ usercourses.earned }}, {{ usercourses.total }})
+        {% endif %}
+        
+        {% endif %}
+
         {% endblock javascript %}
         </script>
     </body>

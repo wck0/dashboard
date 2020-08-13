@@ -1,0 +1,51 @@
+{% extends 'vitabase.html' %}
+{% load ed_extras %}
+
+{% block content %}
+<div class="card mx-md-3">
+    <div class="card-body">
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h3 align="center">Student Information</h3>
+                <br>
+                {% if request.user|has_group:"Student" %}
+                <form method="post" action="{% url 'VitaOffCampus' %}">{% csrf_token %}
+                    {{ expform.media }}
+                    {{ expform.as_p }}
+                    <button class="btn btn-primary" type="submit">
+                        Save
+                    </button>
+                </form>
+                {% else %}
+                <p>Experience Type: {{ expType }}</p>
+                <p>Completed: {{ exp.completed }}</p>
+                <p>Reflection:</p>
+                {{ exp.reflection|safe }} 
+                {% endif %}
+            </div>
+        </div>
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                {% if request.user|has_group:"Student" %}
+                <h3 align="center">Council Notes</h3>
+                <p> Approved: {{ exp.approved }}</p>
+                <br>
+                <p>Notes:</p>
+                {{ exp.council_notes|safe }}
+                {% else %}
+                <form method="post" action="{% url 'VitaOffCampus' %}">{% csrf_token %}
+                    {{ notesForm.media }}
+                    {{ notesForm.as_p }}
+                    <button class="btn btn-primary" type="submit" name="submit" value="{{ user }}">
+                        Save
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <br>
+    </div>
+</div>
+{% endblock content %}

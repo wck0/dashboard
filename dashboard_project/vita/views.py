@@ -277,3 +277,94 @@ def ApplicationView(request, username=None):
             except Application.DoesNotExist:
                 return redirect(reverse('VitaApplication'))
         return redirect(reverse('VitaApplication'))
+
+@login_required
+def OffCampus(request, username=None):
+    user = request.user
+    if is_student(user):
+        if username:
+            return redirect(reverse('VitaOffCampus'))
+        if request.method == 'GET':
+            try:
+                student = Student.objects.get(user=user)
+            except Student.DoesNotExist:
+                return redirect(reverse('VitaIndex'))
+            
+            exp = OffCampusExperience.objects.get(user=user)
+            expform = OffCampusReflectForm(instance=exp)
+
+            return render(request, 'vita/offcampus.html',
+                          {'pagename': 'Your Off Campus Experience',
+                           'exp': exp,
+                           'expform': expform,
+                           'user': user,
+                           'hero': hero,
+                          }
+                         )
+        elif request.method == 'POST':
+            try:
+                student = Student.objects.get(user=user)
+            except Student.DoesNotExist:
+                return redirect(reverse('VitaIndex'))
+
+            exp = OffCampusExperience.objects.get(user=user)
+            
+            form = OffCampusReflectForm(request.POST, instance=exp)
+            if form.is_valid():
+                form.save()
+            
+            return redirect(reverse('VitaOffCampus'))
+    
+    elif is_council(user) or is_WSPstaff(user):
+        if request.method == 'GET':
+            if username is None:
+                students = all_students()
+                return render(request, 'vita/studentpickerform.html',
+                              {'pagename': 'Off Campus Experience',
+                               'target': 'VitaOffCampus',
+                               'students': students,
+                               'hero': hero,
+                              }
+                             )
+            else:
+                user = User.objects.get(username=username)
+                student = Student.objects.get(user=user)
+
+                exp = OffCampusExperience.objects.get(user=user)
+                notesForm = OffCampusCouncilNotesForm(instance=exp)
+                expType = exp.get_experince_type_display()
+                print("The user  is: ", user)
+                
+                return render(request, 'vita/offcampus.html',
+                              {'pagename': 'Off Campus Experience',
+                               'exp': exp, 
+                               'notesForm': notesForm,
+                               'expType': expType,
+                               'user': user,
+                               'student': student,
+                               'hero': hero,
+                              }
+                             )
+            
+        elif request.method == 'POST':
+
+            #checks if the post is coming from the button or the student picker
+            student_user = request.POST.get('submit')
+            if student_user:
+                user = User.objects.get(username=student_user)
+                
+                exp = OffCampusExperience.objects.get(user=user)
+                form = OffCampusCouncilNotesForm(request.POST, instance=exp)
+                if form.is_valid():
+                    form.save()
+            # post is coming from student picker 
+            else: 
+                user_id = request.POST.get('student')
+                user = User.objects.get(id=user_id)
+
+            
+            return redirect(reverse('VitaOffCampus')+user.username)
+            
+            
+    else:
+        return redirect(reverse('VitaIndex'))
