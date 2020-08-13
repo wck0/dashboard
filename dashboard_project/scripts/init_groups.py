@@ -6,16 +6,19 @@
 # ./manage.py shell < path/to/this/script.py
 
 from django.contrib.auth.models import Group
+from django.db import IntegrityError
 
-names = ('Council', 
-         'Director',
-         'Student',
-         'WSP Staff',
-        )
+names = (
+    'Council',
+    'Director',
+    'Student',
+    'WSP Staff',
+)
+
 for name in names:
     try:
         Group.objects.create(name=name)
-    except:
+    except IntegrityError:
         print('Error with', name)
 
 print("Done.")

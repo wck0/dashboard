@@ -12,13 +12,14 @@ from ed.models import Course, EDCourse, ApprovedCourse
 from siteconfig.models import RequiredCourses
 
 
-
 def add_course(course, new_user):
-    edcourse = EDCourse(student = new_user, 
-                        course = course.course, 
-                        credits = course.credits
-                        )
+    edcourse = EDCourse(
+        student=new_user,
+        course=course.course,
+        credits=course.credits,
+    )
     edcourse.save()
+
 
 def import_students(student_list):
     # sets up the group we'll put the new user in
@@ -39,47 +40,48 @@ def import_students(student_list):
             # checks if the fields are valid
             try:
                 first_name = row[FIRST]
-            except:
+            except KeyError:
                 submit_list.append("Error adding student")
-            
+
             try:
                 last_name = row[LAST]
                 email = row[EMAIL]
                 at_index = email.index('@')
                 username = email[:at_index]
-            except:
-                submit_list.append("Error adding " + first_name)
-                
-            #Checks if student already exists
+            except KeyError:
+                submit_list.append(f"Error adding {first_name}")
+
+            # Checks if student already exists
             try:
                 existing_user = User.objects.get(username=username)
                 existing_student = 'user ' + username + ' already exists'
-                submit_list.append(existing_student) # append a list of students who's accounts already exist
-            
+                submit_list.append(existing_student)
+
             # Adds new student
             except User.DoesNotExist:
-                new_user = User(first_name=first_name,
-                                last_name=last_name,
-                                email=email,
-                                username=username,
-                               )
+                new_user = User(
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    username=username,
+                )
                 new_user.save()
                 new_user.groups.add(student_group)
                 new_user.save()
                 new_student = Student(user=new_user)
-                new_student.save() 
-                new_app = Application(user=new_user) #Causes that weird null object erros
+                new_student.save()
+                new_app = Application(user=new_user)
                 new_app.save()
                 new_offCampus = OffCampusExperience(user=new_user)
                 new_offCampus.save()
-                
-                #Adding classes
+
+                # Adding classes
                 for course in RequiredCourses.objects.all():
                     add_course(course, new_user)
-                
+
                 # lock WSP classes
-                new_student = "New user " + username + " " + "(" + first_name + " " + last_name + ")"
+                new_student = f"New user {username} ({first_name} {last_name})"
                 submit_list.append(new_student)
-    
+
     submit_list.sort()
     return submit_list
