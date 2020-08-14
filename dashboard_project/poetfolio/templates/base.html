@@ -165,7 +165,7 @@
                 <div class="col">
                     
                     <div class="card mb-3">
-                        <img class="card-img-top" src='{{ home.image.url }}'>
+                        <img class="card-img-top" src='{% if home.image %}{{home.image.url }}{% endif %}'>
                         <div class="col card-body" style="text-align: center;">
                             <p> {{ home.text|safe }} </p>
                         </div>
@@ -197,7 +197,7 @@
                         <a href="{{ menu_item.link }}">
                             <div class="media homepage-item">
                                  <div class="media-left">
-                                    <img src='{{ menu_item.thumbnail.url }}' class="media-object thumbnail z-depth-1" style="width:60px">
+                                    <img src='{% if menu_item.thumbnail %}{{ menu_item.thumbnail.url }}{% endif %}' class="media-object thumbnail z-depth-1" style="width:60px">
                                 </div>
                                 <div class="media-body left" align="left" style="color: #490F75">
                                     <h4 class="media-heading">

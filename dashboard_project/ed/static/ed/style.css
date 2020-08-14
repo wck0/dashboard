@@ -69,6 +69,7 @@
     z-index: 9999;
     background-color: #fff;
 }
+
 /* adjust sidebar side for desktop */
 @media (min-width: 992px){
     #sidebar {
@@ -270,8 +271,7 @@ a[data-toggle="collapse"] {
         text-align: center;
         padding-left: 30px;
         padding-right: 30px;
-        padding-top: 30px;
-    }
+        padding-top: 30px    }
 }
 
 img.thumbnail {
@@ -306,15 +306,7 @@ img.thumbnail {
 }
 
 
-
-
-
 /* card titles */
-
-
-
-
-
 
 
 /* format the application page */
@@ -333,5 +325,3 @@ img.thumbnail {
         width: 835px !important;
     }
 }
-
-

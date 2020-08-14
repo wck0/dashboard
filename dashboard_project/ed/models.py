@@ -239,7 +239,15 @@ class EducationalGoal(models.Model):
     title      = models.CharField(null=True, max_length=80)
     description = models.TextField(null=True)
     courses    = models.ManyToManyField(EDCourse)
-    
+
+class ApprovedEducationalGoal(models.Model):
+    student    = models.ForeignKey(User,
+                                   on_delete=models.CASCADE,
+                                  )
+    title      = models.CharField(null=True, max_length=80)
+    description = models.TextField(null=True)
+    courses    = models.ManyToManyField(EDCourse)
+
 class EDCourseForm(forms.Form):
     maj1 = forms.BooleanField(required=False)
     maj2 = forms.BooleanField(required=False)
