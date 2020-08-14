@@ -88,8 +88,7 @@ class OffCampusExperience(models.Model):
         (Y, 'Yes'),
         (N, 'No'),
     )
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE,)
     experince_type  = models.CharField(max_length=3, choices=EXPERIENCE_TYPE, default="UD")
     approved  = models.CharField(max_length=3, choices=BOOLEAN_ANSWER, default="No")
     completed  = models.CharField(max_length=3, choices=BOOLEAN_ANSWER, default="No")
@@ -97,7 +96,7 @@ class OffCampusExperience(models.Model):
     reflection =  RichTextField(blank=True, null=True)
 
     def __str__(self):
-        return str(self.user) + "'s experince"
+        return str(self.student)
     
 class Menu_item(models.Model):
     title = title = models.CharField(max_length=60)

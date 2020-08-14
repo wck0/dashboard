@@ -290,7 +290,7 @@ def OffCampus(request, username=None):
             except Student.DoesNotExist:
                 return redirect(reverse('VitaIndex'))
             
-            exp = OffCampusExperience.objects.get(user=user)
+            exp = OffCampusExperience.objects.get(student=student)
             expform = OffCampusReflectForm(instance=exp)
 
             return render(request, 'vita/offcampus.html',
@@ -307,7 +307,7 @@ def OffCampus(request, username=None):
             except Student.DoesNotExist:
                 return redirect(reverse('VitaIndex'))
 
-            exp = OffCampusExperience.objects.get(user=user)
+            exp = OffCampusExperience.objects.get(student=student)
             
             form = OffCampusReflectForm(request.POST, instance=exp)
             if form.is_valid():
@@ -330,7 +330,7 @@ def OffCampus(request, username=None):
                 user = User.objects.get(username=username)
                 student = Student.objects.get(user=user)
 
-                exp = OffCampusExperience.objects.get(user=user)
+                exp = OffCampusExperience.objects.get(student=student)
                 notesForm = OffCampusCouncilNotesForm(instance=exp)
                 expType = exp.get_experince_type_display()
                 print("The user  is: ", user)
@@ -352,8 +352,9 @@ def OffCampus(request, username=None):
             student_user = request.POST.get('submit')
             if student_user:
                 user = User.objects.get(username=student_user)
-                
-                exp = OffCampusExperience.objects.get(user=user)
+                student = Student.objects.get(user=user)
+
+                exp = OffCampusExperience.objects.get(student=student)
                 form = OffCampusCouncilNotesForm(request.POST, instance=exp)
                 if form.is_valid():
                     form.save()

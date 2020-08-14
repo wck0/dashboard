@@ -56,13 +56,12 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 @admin.register(OffCampusExperience)
 class OffCampusExperienceAdmin(admin.ModelAdmin):
-    search_fields = ['user__username',
-                     'user__first_name', 'user__last_name',
-                     'essay',
+    search_fields =['student__username', 'student__first_name',
+                     'student__last_name', 'essay',
                     ]
     
     list_display = (
-            'user',
+            'student',
             'experince_type',
             'approved',
             'completed',

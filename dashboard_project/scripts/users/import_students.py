@@ -70,7 +70,7 @@ def import_students(student_list):
                 new_student.save() 
                 new_app = Application(user=new_user) #Causes that weird null object erros
                 new_app.save()
-                new_offCampus = OffCampusExperience(user=new_user)
+                new_offCampus = OffCampusExperience(student=new_student)
                 new_offCampus.save()
                 
                 #Adding classes
