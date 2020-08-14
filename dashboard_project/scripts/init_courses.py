@@ -15,7 +15,7 @@ with open(coursejson, 'r', encoding="UTF-8") as f:
 for s in course_dict:
     try:
         subj = Subject.objects.get(short=s)
-    except:
+    except Subject.DoesNotExist:
         continue
     print(subj)
     c = course_dict[s]
@@ -23,21 +23,29 @@ for s in course_dict:
         for y in c[number]:
             for title in y:
                 try:
-                    Course.objects.get(subject=subj,
-                                       number=number,
-                                       title=title,
-                                      )
-                    print("Course {} {} {} already in the database"
-                          .format(subj.short, number, title)
-                         )
-                except:
-                    new_course = Course(subject=subj,
-                                        number=number,
-                                        title=title,
-                                       )
+                    Course.objects.get(
+                        subject=subj,
+                        number=number,
+                        title=title,
+                    )
+                    print(
+                        "Course {} {} {} already in the database"
+                        .format(subj.short, number, title)
+                    )
+                except Course.DoesNotExist:
+                    new_course = Course(
+                        subject=subj,
+                        number=number,
+                        title=title,
+                    )
                     new_course.save()
-                    print("Added {} {} {}".format(subj.short, number, title).encode("UTF-8"))
-#    exit()
+                    print(
+                        "Added {} {} {}".format(
+                            subj.short,
+                            number,
+                            title
+                        ).encode("UTF-8")
+                    )
 
 # plug in 100T, etc., for transfer courses
 
@@ -45,7 +53,9 @@ humanity = Division.objects.get(name="Humanities")
 natsci = Division.objects.get(name="Natural Sciences")
 socsci = Division.objects.get(name="Social Sciences")
 
-subjs = Subject.objects.filter(department__division=humanity) |        Subject.objects.filter(department__division=natsci) |        Subject.objects.filter(department__division=socsci)
+academic = (humanity, natsci, socsci)
+
+subjs = Subject.objects.filter(department__division__in=academic)
 
 numbs = ('100T', '200T', '300T', '400T')
 title = "Transfer"
@@ -58,4 +68,3 @@ for subj in subjs:
             new_course = Course(subject=subj, number=numb, title=title)
             new_course.save()
             print(f"Added {subj.short} {numb} {title}")
-            

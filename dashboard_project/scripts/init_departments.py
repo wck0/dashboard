@@ -6,10 +6,11 @@
 # ./manage.py shell < path/to/this/script.py
 
 from ed.models import Division, Department
+from django.db import IntegrityError
 
 divs = {}
 
-for i in range(1,6):
+for i in range(1, 6):
     divs[i] = Division.objects.filter(code=i).get()
 
 depts = [
@@ -49,7 +50,7 @@ for n, d in depts:
         try:
             dept.save()
             print("Added {} to the database".format(n))
-        except:
+        except IntegrityError:
             print("Something went wrong with {}".format(n))
     else:
         print("It looks like {} is already in the database.".format(n))

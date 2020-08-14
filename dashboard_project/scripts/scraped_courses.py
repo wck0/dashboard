@@ -36,9 +36,10 @@
 import csv
 from ed.models import *
 
-terms = ('201609', '201701', '201702', '201709', '201801', '201802',
-         '201809', '201901', '201902', '201909', '202001', '202002',
-        )
+terms = (
+    '201609', '201701', '201702', '201709', '201801', '201802',
+    '201809', '201901', '201902', '201909', '202001', '202002',
+)
 
 errors = 0
 added = 0
@@ -53,7 +54,7 @@ for term in terms:
             crse = row['Crse']
             subj, numb = crse.split(' ')
             title = row['Title']
-            
+
             try:
                 subject = Subject.objects.get(short=subj)
                 Course.objects.get(subject=subject, number=numb, title=title)
@@ -67,8 +68,6 @@ for term in terms:
                 c.save()
                 print(f'{subj} {numb} {title} added')
                 added += 1
-            except:
-                continue
 print('done.')
 print(added, 'added')
 print(exists, 'exist')

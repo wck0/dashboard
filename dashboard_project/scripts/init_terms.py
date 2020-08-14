@@ -8,7 +8,7 @@
 from ed.models import Term
 
 years = range(2012, 2025)
-ms    = [1, 2, 6, 9]
+ms = [1, 2, 6, 9]
 
 for y in years:
     for m in ms:
