@@ -30,22 +30,20 @@ logger = logging.getLogger(__name__)
 
 try:
     hero = HeroImage.objects.get(app='ed')
-#except HeroImage.DoesNotExist:
-#    hero = HeroImage.objects.get(app='default')
-except:
+except HeroImage.DoesNotExist:
     hero = None
 
-#Displays all courses that the user has
-#Defaults to Index if no other return is hit
-#fix login_required error
+# Displays all courses that the user has
+# Defaults to Index if no other return is hit
+# fix login_required error
+
+
 @login_required
-def CourseList(request, username=None): 
+def CourseList(request, username=None):
     user = request.user
 
-    # POST request handle staff/council
     if request.method == 'POST':
 
-        #looking for staff or council
         if is_WSPstaff(user) or is_council(user):
             try:
                 student = User.objects.get(id=request.POST.get('student'))
@@ -54,34 +52,35 @@ def CourseList(request, username=None):
 
             return redirect(reverse('CourseList')+student.username)
 
-
         else:
             return redirect(reverse('Index'))
 
-    # GET request handle student and staff/council
     elif request.method == 'GET':
-        #students
         if is_student(user):
             studentcourses = all_courses(user)
-            return render(request, 'ed/courselist.html',
-                                  {'pagename': "Course List",
-                                   'user': user,
-                                   'usercourses': studentcourses,
-                                   'hero': hero,
-                                  }
-                         )
-        #staff/council
+            return render(
+                request,
+                'ed/courselist.html',
+                {
+                    'pagename': "Course List",
+                    'user': user,
+                    'usercourses': studentcourses,
+                    'hero': hero,
+                }
+            )
         elif is_WSPstaff(user) or is_council(user):
             if username is None:
                 studentlist = all_students()
-
-                return render(request, 'ed/studentpickerform.html',
-                                      {'pagename': "Select Student",
-                                       'students': studentlist,
-                                       'target': 'CourseList',
-                                       'hero': hero,
-                                      }
-                             )
+                return render(
+                    request,
+                    'ed/studentpickerform.html',
+                    {
+                        'pagename': "Select Student",
+                        'students': studentlist,
+                        'target': 'CourseList',
+                        'hero': hero,
+                    }
+                )
             else:
                 student = User.objects.get(username=username)
                 studentcourses = all_courses(student)
@@ -94,45 +93,30 @@ def CourseList(request, username=None):
                 support = supporting_courses(student)
                 edgoals = EducationalGoal.objects.filter(student=user)
 
-                return render(request, 'ed/all.html',
-                             {'pagename': student.get_full_name() + " Course list",
-                              'user': student,
-                              'usercourses': studentcourses,
-                              'divcourses': divcourses,
-                              'major1': major1,
-                              'major2': major2,
-                              'minor1': minor1,
-                              'minor2': minor2,
-                              'wspcourses': wspcourses,
-                              'support': support,
-                              'edgoals': edgoals,
-                              'hero': hero,
-                             })
+                return render(
+                    request, 'ed/all.html',
+                    {
+                        'pagename': student.get_full_name() + " Course list",
+                        'user': student,
+                        'usercourses': studentcourses,
+                        'divcourses': divcourses,
+                        'major1': major1,
+                        'major2': major2,
+                        'minor1': minor1,
+                        'minor2': minor2,
+                        'wspcourses': wspcourses,
+                        'support': support,
+                        'edgoals': edgoals,
+                        'hero': hero,
+                    }
+                )
 
         else:
-            #no groups
             return redirect(reverse('Index'))
 
-    # not GET or POST request
     else:
         return redirect(reverse('Index'))
 
-##Displays all courses that are offered
-#@login_required
-#def AllCourses(request, subj=''):
-
-#    if subj:
-#        subject = Subject.objects.get(short=subj)
-#        listofcourses = Course.objects.filter(subject=subject)
-#    else:
-#        listofcourses = Course.objects.all() #list of course objects
-#    context = {
-#            'usercourses':listofcourses,
-#            'pagename': "All Courses",
-#            'hero': hero,
-#    }
-
-#    return render(request, 'ed/allcourses.html', context)
 
 @login_required
 def EditEDCourse(request, edcourse_id=None):
@@ -150,15 +134,18 @@ def EditEDCourse(request, edcourse_id=None):
             subjects = Subject.objects.all()
             years = [i for i in range(year-4, year+4)]
             subjs = [s.short for s in subjects]
-            return render(request, 'ed/editEDCourse.html',
-                               {'pagename':'Edit Course',
-                                'subjects':subjs,
-                                'years':years,
-                                'user':user,
-                                'edcourse':edcourse,
-                                'hero': hero,
-                               }
-                     )
+            return render(
+                request,
+                'ed/editEDCourse.html',
+                {
+                    'pagename': 'Edit Course',
+                    'subjects': subjs,
+                    'years': years,
+                    'user': user,
+                    'edcourse': edcourse,
+                    'hero': hero,
+                }
+            )
         else:
             return render(request, 'ed/editEDCourse.html', {})
 
@@ -188,7 +175,7 @@ def EditEDCourse(request, edcourse_id=None):
             completed = True
         else:
             completed = False
-        
+
         if int(maj1) > 0:
             maj1 = True
         else:
@@ -215,20 +202,20 @@ def EditEDCourse(request, edcourse_id=None):
             is_whittier = False
 
         if (subj and num and title and term):
-            #look into getobjector404
-            course = Course.objects.get(subject__short = subj,
-                                        number = num,
-                                        title = title,
-                                       )
+            course = Course.objects.get(
+                subject__short=subj,
+                number=num,
+                title=title,
+            )
             edcourse = EDCourse.objects.get(id=edcourse_id)
             if edcourse.student == user:
                 edcourse.course = course
                 edcourse.term = term
                 edcourse.credits = cr
                 edcourse.completed = completed
-                edcourse.instructor = instructor 
+                edcourse.instructor = instructor
                 edcourse.maj1 = maj1
-                edcourse.maj2 = maj2 
+                edcourse.maj2 = maj2
                 edcourse.min1 = min1
                 edcourse.min2 = min2
                 edcourse.is_whittier = is_whittier
@@ -236,22 +223,21 @@ def EditEDCourse(request, edcourse_id=None):
 
                 if crn.isdigit():
                     edcourse.crn = crn
-                #some checking maybe?
+
                 edcourse.save()
                 return redirect(reverse('CourseList'))
             else:
                 return redirect(reverse('Index'))
         return redirect(reverse('CourseList'))
-    
+
     return redirect(reverse('Index'))
 
-#Allows user to add an EDCourse object (class) to their ED
+
 @login_required
 def AddCourse(request):
     user = request.user
     if request.method == 'GET':
 
-        #student only
         if not is_student(user):
             return redirect(reverse('Index'))
 
@@ -262,20 +248,23 @@ def AddCourse(request):
 
         studentcourses = all_courses(user)
 
-        return render(request, 'ed/AddEDCourse.html', 
-                              {'subjects':sorted(subjs),
-                               'years':years,
-                               'user': user,
-                               'usercourses':studentcourses,
-                               'hero': hero,
-                              }
-                     )
+        return render(
+            request,
+            'ed/AddEDCourse.html',
+            {
+                'subjects': sorted(subjs),
+                'years': years,
+                'user': user,
+                'usercourses': studentcourses,
+                'hero': hero,
+            }
+        )
 
     elif request.method == 'POST':
 
         if not is_student(user):
             return redirect(reverse('Index'))
-        
+
         subjs = request.POST.getlist('subject')
         nums = request.POST.getlist('number')
         titles = request.POST.getlist('title')
@@ -291,7 +280,7 @@ def AddCourse(request):
         min2s = request.POST.getlist('min2')
         is_whittiers = request.POST.getlist('is_whittier')
         notes = request.POST.getlist('notes')
-        
+
         for i in range(len(subjs)):
             subj = subjs[i]
             num = nums[i]
@@ -308,7 +297,7 @@ def AddCourse(request):
             min2 = min2s[i]
             is_whittier = is_whittiers[i]
             note = notes[i]
-            
+
             term = Term.objects.get(code=(year+term))
 
             if not cr:
@@ -318,7 +307,7 @@ def AddCourse(request):
                 completed = True
             else:
                 completed = False
-            
+
             if int(maj1) > 0:
                 maj1 = True
             else:
@@ -345,41 +334,42 @@ def AddCourse(request):
                 is_whittier = False
 
             if (subj and num and title and term):
-                #look into getobjector404
-                course = Course.objects.get(subject__short = subj,
-                                            number = num,
-                                            title = title,
-                                           )
+                course = Course.objects.get(
+                    subject__short=subj,
+                    number=num,
+                    title=title,
+                )
 
-                newedc = EDCourse.objects.create(student = user, 
-                                                 course = course,
-                                                 term = term, 
-                                                 credits = cr,
-                                                 completed = completed,
-                                                 instructor = instructor, 
-                                                 maj1 = maj1,
-                                                 maj2 = maj2, 
-                                                 min1 = min1,
-                                                 min2 = min2,
-                                                 is_whittier = is_whittier,
-                                                 notes = note,
-                                                )
+                newedc = EDCourse.objects.create(
+                    student=user,
+                    course=course,
+                    term=term,
+                    credits=cr,
+                    completed=completed,
+                    instructor=instructor,
+                    maj1=maj1,
+                    maj2=maj2,
+                    min1=min1,
+                    min2=min2,
+                    is_whittier=is_whittier,
+                    notes=note,
+                )
                 if crn.isdigit():
                     newedc.crn = crn
-                #some checking maybe?
                 newedc.save()
         return redirect(reverse('AddCourse'))
     return redirect(reverse('Index'))
 
-#Gets EDCourse object to be deleted and handles error if DNE
+
 @login_required
 def DeleteEDCourse(request):
 
     if request.method == 'POST':
         try:
-            course = EDCourse.objects.get(student=request.user,
-                                          id=request.POST.get('course_id'),
-                                         )
+            course = EDCourse.objects.get(
+                student=request.user,
+                id=request.POST.get('course_id'),
+            )
             course.delete()
             return redirect(reverse('CourseList'))
 
