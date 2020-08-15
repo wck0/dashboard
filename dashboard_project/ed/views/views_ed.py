@@ -20,15 +20,11 @@ logger = logging.getLogger(__name__)
 
 try:
     hero = HeroImage.objects.get(app='ed')
-#except HeroImage.DoesNotExist:
-#    hero = HeroImage.objects.get(app='default')
-except:
+except HeroImage.DoesNotExist:
     hero = None
 
-#contains links to other parts of the site and welcomes user
 
 def EDIndex(request):
-
     council = 0
     staff = 0
     student = 0
@@ -41,89 +37,50 @@ def EDIndex(request):
         elif grp.name == 'Student':
             student = 1
 
-    return render(request, 'ed/landingpage.html', 
-                          {'pagename': "Welcome",
-                           'council': council,
-                           'staff': staff,
-                           'student': student,
-                           'name': request.user.username,
-                           'hero': hero,
-                          }
-           )
+    return render(
+        request,
+        'ed/landingpage.html',
+        {
+            'pagename': "Welcome",
+            'council': council,
+            'staff': staff,
+            'student': student,
+            'name': request.user.username,
+            'hero': hero,
+        }
+    )
 
-#Displays statistics for divisions, departments, and subjects
-#def Stats(request):
 
-#    usrgrp = request.user.groups.all()
-#    total = Course.numcourses()
-
-#    divisions = Division.objects.all()
-#    divcounts = []
-#    divpercent = []
-#    for div in divisions:
-#        divcounts.append(div.numcourses())
-#        divpercent.append(div.perccourses())
-
-#    departments = Department.objects.all()
-#    deptcounts = []
-#    deptpercent = []
-#    for dept in departments:
-#        deptcounts.append(dept.numcourses())
-#        deptpercent.append(dept.perccourses())
-
-#    subjects = Subject.objects.all()
-#    subjcounts = []
-#    subjpercent = []
-#    for subj in subjects:
-#        subjcounts.append(subj.numcourses())
-#        subjpercent.append(subj.perccourses())
-
-#    return render(request, 'ed/stats.html', {"pagename": "Stats",
-#                                             'total': total,
-#                                             'divisions': divisions,
-#                                             'divcounts': divcounts,
-#                                             'divpercent': divpercent,
-#                                             'departments': departments,
-#                                             'deptcounts': deptcounts,
-#                                             'deptpercent': deptpercent,
-#                                             'subjects': subjects,
-#                                             'subjcounts': subjcounts,
-#                                             'subjpercent': subjpercent,
-#                                             'hero': hero,
-#                                            }
-#                 )
-
-#JavaScript API for AddEDCourse page
-#use parent or div thing with js in template
-#to ensure that you won't populate other forms while changing the dropdown
 @login_required
 def API(request, subj='', num=''):
-    
+
     user = request.user
     if request.method == 'GET':
         if subj:
             if num:
-                #send back titles
-                qset_titles = Course.objects.filter(number = num, 
-                                                    subject__short = subj)
-                titles_dict = {c.title: c.number for c in qset_titles if c.title != 'undefined'}
+                qset_titles = Course.objects.filter(
+                    number=num,
+                    subject__short=subj
+                )
+                titles_dict = {
+                    c.title: c.number for c in qset_titles
+                    if c.title != 'undefined'
+                }
                 return JsonResponse(titles_dict)
             else:
-                #subject given but not number
-                qset = Course.objects.filter(subject__short = subj)
+                qset = Course.objects.filter(subject__short=subj)
                 num_dict = {c.number: c.number for c in qset}
                 return JsonResponse(num_dict)
         else:
             if num:
-                #number given but not subj, likely malicious
                 redirect(reverse('Index'))
-            #no subj and no num, return json of subjects
             return JsonResponse([], safe=False)
+
 
 @login_required
 def ED(request, username=None):
     user = request.user
-    
+
     if request.method == 'POST':
         if is_WSPstaff(user) or is_council(user):
             try:
@@ -133,7 +90,7 @@ def ED(request, username=None):
             return redirect(reverse('ED')+student.username)
         else:
             return redirect(reverse('Index'))
-    
+
     elif request.method == 'GET':
         if is_student(user):
             username = request.user.username
@@ -146,42 +103,47 @@ def ED(request, username=None):
             minor2 = minor_courses(user, 2)
             wspcourses = WSPcourses(user)
             support = supporting_courses(user)
-            
+
             try:
                 student = Student.objects.get(user=user)
                 narrative = student.narrative
             except Student.DoesNotExist:
                 narrative = ""
-            
-            return render(request, 'ed/ED.html',
-                                  {'user': user,
-                                   'username': username,
-                                   'usercourses': studentcourses,
-                                   'divcourses': divcourses,
-                                   'major1': major1,
-                                   'major2': major2,
-                                   'minor1': minor1,
-                                   'minor2': minor2,
-                                   'wspcourses': wspcourses,
-                                   'support': support,
-                                   'edgoals': edgoals,
-                                   'narrative': narrative,
-                                   'pagename': "Educational Design",
-                                   'hero': hero,
-                                  }
-                         )
+
+            return render(
+                request,
+                'ed/ED.html',
+                {
+                    'user': user,
+                    'username': username,
+                    'usercourses': studentcourses,
+                    'divcourses': divcourses,
+                    'major1': major1,
+                    'major2': major2,
+                    'minor1': minor1,
+                    'minor2': minor2,
+                    'wspcourses': wspcourses,
+                    'support': support,
+                    'edgoals': edgoals,
+                    'narrative': narrative,
+                    'pagename': "Educational Design",
+                    'hero': hero,
+                }
+            )
         elif is_WSPstaff(user) or is_council(user):
             if username is None:
                 studentlist = all_students()
-                return render(request, 'ed/studentpickerform.html',
-                                       {'pagename': 'Select Student',
-                                        'students': studentlist,
-                                        'target': 'ED',
-                                        'hero': hero,
-                                       }
-                             )
+                return render(
+                    request,
+                    'ed/studentpickerform.html',
+                    {
+                        'pagename': 'Select Student',
+                        'students': studentlist,
+                        'target': 'ED',
+                        'hero': hero,
+                    }
+                )
             else:
-                # Setting up the table
                 student = User.objects.get(username=username)
                 edgoals = EducationalGoal.objects.filter(student=student)
                 studentcourses = all_courses(student)
@@ -191,73 +153,71 @@ def ED(request, username=None):
                 minor1 = minor_courses(student, 1)
                 minor2 = minor_courses(student, 2)
                 wspcourses = WSPcourses(student)
-                support = supporting_courses(student)   
-                
-                # setting up the form
-                
+                support = supporting_courses(student)
+
                 try:
                     student_obj = Student.objects.get(user=student)
                     narrative = student_obj.narrative
                 except Student.DoesNotExist:
                     narrative = ""
                 pagename = student.get_full_name() + " Educational Design"
-                return render(request, 'ed/ED.html',
-                                      {'user': student,
-                                       'username': username,
-                                       'usercourses': studentcourses,
-                                       'divcourses': divcourses,
-                                       'major1': major1,
-                                       'major2': major2,
-                                       'minor1': minor1,
-                                       'minor2': minor2,
-                                       'wspcourses': wspcourses,
-                                       'support': support,
-                                       'edgoals': edgoals,
-                                       'narrative': narrative,
-                                       'pagename': pagename,
-                                       'hero': hero,
-                                      }
-                             )
+                return render(
+                    request,
+                    'ed/ED.html',
+                    {
+                        'user': student,
+                        'username': username,
+                        'usercourses': studentcourses,
+                        'divcourses': divcourses,
+                        'major1': major1,
+                        'major2': major2,
+                        'minor1': minor1,
+                        'minor2': minor2,
+                        'wspcourses': wspcourses,
+                        'support': support,
+                        'edgoals': edgoals,
+                        'narrative': narrative,
+                        'pagename': pagename,
+                        'hero': hero,
+                    }
+                )
         else:
             return redirect(reverse('Index'))
     else:
         return redirect(reverse('Index'))
 
-# copies  current ED into approved ED
+
 @login_required
 def ApproveED(request):
     user = request.user
-    #try:
     if request.method == 'POST':
         if is_WSPstaff(user):
             username = request.POST.get('student')
             student = User.objects.get(username=username)
             ED = all_courses(student)
-            
-            #Updates the approved status of every course
+
             for course in ED:
-                checkmark = request.POST.get('%(course)s' % {'course': course,}) #I had to use a c like pritf statment to make this work
+                checkmark = request.POST.get(f"{course}")
                 if checkmark:
                     course.approved = True
                 else:
                     course.approved = False
                 course.save()
-            
+
             approved = ED.filter(approved=True)
 
-            #Removes old courses that are not in the new course list
             oldApproved = approved_courses(student)
             for c in oldApproved:
-                if approved.filter(course=c.course).exists() == False:
+                if not approved.filter(course=c.course).exists():
                     c.delete()
-            
-            # Adds new courses to Approved Course list
+
             for course in approved:
-                # checks is Approved course already exists. If it does, update it. If it does not, create a new one.
-                
                 edcourseID = course.id
-                if oldApproved.filter(course=course.course, student=student).exists():
-                #if oldApproved.filter(edcourseID=edcourseID).exists():
+#                if oldApproved.filter(edcourseID=edcourseID).exists():
+                if oldApproved.filter(
+                    course=course.course,
+                    student=student
+                ).exists():
                     term = course.term
                     credits = course.credits
                     completed = course.completed
@@ -270,8 +230,11 @@ def ApproveED(request):
                     is_whittier = course.is_whittier
                     notes = course.notes
 
-                    update = ApprovedCourse.objects.get(course=course.course, student=student)
-                    #update = ApprovedCourse.objects.get(edcourseID=edcourseID)
+                    update = ApprovedCourse.objects.get(
+                        course=course.course,
+                        student=student
+                    )
+#                    update = ApprovedCourse.objects.get(edcourseID=edcourseID)
                     update.term = term
                     update.credits = credits
                     update.completed = completed
@@ -283,33 +246,31 @@ def ApproveED(request):
                     update.min2 = min2
                     update.is_whittier = is_whittier
                     update.notes = notes
-                    update.save() 
+                    update.save()
 
                 else:
-                    approveddcourse = ApprovedCourse(student = student,
-                                                    course = course.course,
-                                                    term = course.term,
-                                                    credits = course.credits,
-                                                    completed = course.completed,
-                                                    crn = course.crn,
-                                                    instructor = course.instructor,
-                                                    maj1 = course.maj1,
-                                                    maj2 = course.maj2,
-                                                    min1 = course.min1,
-                                                    min2 = course.min2,
-                                                    is_whittier = course.is_whittier,
-                                                    notes =  course.notes,
-                                                    edcourseID = edcourseID,
-                                        )
+                    approveddcourse = ApprovedCourse(
+                        student=student,
+                        course=course.course,
+                        term=course.term,
+                        credits=course.credits,
+                        completed=course.completed,
+                        crn=course.crn,
+                        instructor=course.instructor,
+                        maj1=course.maj1,
+                        maj2=course.maj2,
+                        min1=course.min1,
+                        min2=course.min2,
+                        is_whittier=course.is_whittier,
+                        notes=course.notes,
+                        edcourseID=edcourseID,
+                    )
                     approveddcourse.save()
-            
-            #Sets EDmeeting_complte to true
+
             vitaStudent = Student.objects.get(user=student)
             vitaStudent.EDmeeting_complete = True
             vitaStudent.save()
 
-            return redirect(reverse('ApprovedCourses')+student.username) 
+            return redirect(reverse('ApprovedCourses')+student.username)
     else:
         return redirect(reverse('Index'))
-    #except:
-    #    return redirect(reverse('Index'))
