@@ -20,16 +20,14 @@ logger = logging.getLogger(__name__)
 
 try:
     hero = HeroImage.objects.get(app='ed')
-#except HeroImage.DoesNotExist:
-#    hero = HeroImage.objects.get(app='default')
-except:
+except HeroImage.DoesNotExist:
     hero = None
 
-#Allows user to add/change/delete Major and Minors
+
 @login_required
 def MajorMinor(request):
     user = request.user
-    
+
     if request.method == 'GET':
         if is_student(user):
             studentcourses = all_courses(user)
@@ -37,21 +35,23 @@ def MajorMinor(request):
             major2 = major_courses(user, 2)
             minor1 = minor_courses(user, 1)
             minor2 = minor_courses(user, 2)
-            return render(request, 'ed/MajorMinorForm.html', 
-                         {'pagename': "Major/Minor",
-                          'major1': major1,
-                          'major2': major2,
-                          'minor1': minor1,
-                          'minor2': minor2,
-                          'usercourses': studentcourses,
-                          'hero': hero,
-                         })
+            return render(
+                request,
+                'ed/MajorMinorForm.html',
+                {
+                    'pagename': "Major/Minor",
+                    'major1': major1,
+                    'major2': major2,
+                    'minor1': minor1,
+                    'minor2': minor2,
+                    'usercourses': studentcourses,
+                    'hero': hero,
+                }
+            )
         else:
             return HttpResponseRedirect(reverse('Index'))
 
-    #post to add majors/minors
     elif request.method == 'POST':
-        #students only
         if not is_student(user):
             return HttpResponseRedirect(reverse('Index'))
 
@@ -59,8 +59,7 @@ def MajorMinor(request):
         maj2 = None
         min1 = None
         min2 = None
-        
-        #separate each try except
+
         try:
             maj1 = Major.objects.get(student=user, number=1)
         except Major.DoesNotExist:
@@ -84,7 +83,6 @@ def MajorMinor(request):
             if group == studentgroup:
                 student = True
         if student:
-            #get info from form
             title1 = request.POST.get('maj1title')
             sum1 = request.POST.get('maj1summary')
             title2 = request.POST.get('maj2title')
@@ -94,60 +92,65 @@ def MajorMinor(request):
             title4 = request.POST.get('min2title')
             sum4 = request.POST.get('min2summary')
 
-            #Check for info being filled in
-            #Change rest fo match maj1 to worry about adding a 
-            #maj/min they don't want
             if maj1:
-                maj1.student=user
-                maj1.title=title1
-                maj1.description=sum1
-                maj1.number=1
+                maj1.student = user
+                maj1.title = title1
+                maj1.description = sum1
+                maj1.number = 1
                 maj1.save()
             else:
                 if title1:
-                    maj1 = Major.objects.create(student=user,
-                                                title=title1,
-                                                description=sum1,
-                                                number=1)
+                    maj1 = Major.objects.create(
+                        student=user,
+                        title=title1,
+                        description=sum1,
+                        number=1
+                    )
                     maj1.save()
             if maj2:
-                maj2.student=user
-                maj2.title=title2
-                maj2.description=sum2
-                maj2.number=2
+                maj2.student = user
+                maj2.title = title2
+                maj2.description = sum2
+                maj2.number = 2
                 maj2.save()
             else:
                 if title2:
-                    maj2 = Major.objects.create(student=user,
-                                               title=title2,
-                                               description=sum2,
-                                               number=2)
+                    maj2 = Major.objects.create(
+                        student=user,
+                        title=title2,
+                        description=sum2,
+                        number=2
+                    )
                     maj2.save()
             if min1:
-                min1.student=user
-                min1.title=title3
-                min1.description=sum3
-                min1.number=1
+                min1.student = user
+                min1.title = title3
+                min1.description = sum3
+                min1.number = 1
                 min1.save()
             else:
                 if title3:
-                    min1 = Minor.objects.create(student=user,
-                                               title=title3,
-                                               description=sum3,
-                                               number=1)
+                    min1 = Minor.objects.create(
+                        student=user,
+                        title=title3,
+                        description=sum3,
+                        number=1
+                    )
                     min1.save()
             if min2:
-                min2.student=user
-                min2.title=title4
-                min2.description=sum4
-                min2.number=2
+                min2.student = user
+                min2.title = title4
+                min2.description = sum4
+                min2.number = 2
                 min2.save()
-            else:  # this peals to be the problem right here. The second minor isn't being created
+            else:
                 if title4:
-                    min2 = Minor.objects.create(student=user,
-                                               title=title4,
-                                               description=sum4,
-                                               number=2)
+                    min2 = Minor.objects.create(
+                        student=user,
+                        title=title4,
+                        description=sum4,
+                        number=2
+                    )
                     min2.save()
 
             user = request.user
@@ -157,70 +160,65 @@ def MajorMinor(request):
             minor2 = minor_courses(user, 2)
 
             studentcourses = all_courses(user)
-            return render(request, 'ed/MajorMinorForm.html', 
-                         {'pagename': "Major/Minor",
-                          'major1': major1,
-                          'major2': major2,
-                          'minor1': minor1,
-                          'minor2': minor2,
-                          'usercourses': studentcourses,
-                          'hero': hero,
-                         })
+            return render(
+                request,
+                'ed/MajorMinorForm.html',
+                {
+                    'pagename': "Major/Minor",
+                    'major1': major1,
+                    'major2': major2,
+                    'minor1': minor1,
+                    'minor2': minor2,
+                    'usercourses': studentcourses,
+                    'hero': hero,
+                }
+            )
 
         else:
             return HttpResponseRedirect(reverse('Index'))
     else:
         return HttpResponseRedirect(reverse('Index'))
 
-#Edits all EDCourse objects that were part of the Major to be deleted
-#Checks that User is the owner of the Major
-#Deletes Major
+
 @login_required
 def DeleteMajor(request):
-
-    #in Django thing called Sessions can set something called 
-    #'next' in order to redirect on an HttpResponseRedirect to same page
     if request.method == 'POST':
         try:
             user = request.user
             major_id = int(request.POST.get('major_id'))
             courselist = major_courses(user, major_id)
-        except Major.DoesNotExist:#handles incorrect user
+        except Major.DoesNotExist:
             return HttpResponseRedirect(reverse('Index'))
-        
+
         for course in courselist:
             if major_id == 1:
-                course.maj1=False
+                course.maj1 = False
                 course.save()
             if major_id == 2:
-                course.maj2=False
+                course.maj2 = False
                 course.save()
         major = Major.objects.get(student=user, number=major_id)
         major.delete()
         return HttpResponseRedirect(reverse('CourseList'))
 
-#Edits all EDCourse objects that were part of the Minor to be deleted
-#Checks that User is the owner of the Minor
-#Deletes Minor
+
 @login_required
 def DeleteMinor(request):
-
     if request.method == 'POST':
         try:
             user = request.user
             minor_id = int(request.POST.get('minor_id'))
             courselist = minor_courses(user, minor_id)
-        except Minor.DoesNotExist:#handles incorrect user
+        except Minor.DoesNotExist:
             return HttpResponseRedirect(reverse('Index'))
-        
+
         for course in courselist:
             if minor_id == 1:
-                course.min1=False
+                course.min1 = False
                 course.save()
             if minor_id == 2:
-                course.min2=False
+                course.min2 = False
                 course.save()
         minor = Minor.objects.get(student=user, number=minor_id)
         minor.delete()
-        return HttpResponseRedirect(reverse('CourseList'))       
-      
+        return HttpResponseRedirect(reverse('CourseList'))
