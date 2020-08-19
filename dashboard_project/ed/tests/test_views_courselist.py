@@ -455,12 +455,6 @@ class AddCourseTest(TestCase):
         )
         test_student.groups.add(student_group)
 
-        other_test_student = User.objects.create_user(
-            username='other_student',
-            password='anotherstudent',
-        )
-        other_test_student.groups.add(student_group)
-
         term = Term()
         term.code = 202009
         term.save()
@@ -654,7 +648,7 @@ class AddCourseTest(TestCase):
             'title': [whyread.title, cellbio.title],
             'term': ['09', '09'],
             'year': ['2020', '2020'],
-            'credits': ['3', '3'],
+            'credits': ['3', '4'],
             'crn': ['', ''],
             'instructor': ['', ''],
             'completed': ['1', '0'],
@@ -695,7 +689,7 @@ class AddCourseTest(TestCase):
         term = Term.objects.get(code=202009)
         self.assertEqual(edcourse.course, cellbio)
         self.assertEqual(edcourse.term, term)
-        self.assertEqual(edcourse.credits, 3)
+        self.assertEqual(edcourse.credits, 4)
         self.assertFalse(edcourse.completed)
         self.assertFalse(edcourse.maj1)
         self.assertTrue(edcourse.maj2)
@@ -706,3 +700,183 @@ class AddCourseTest(TestCase):
             edcourse.notes,
             ''
         )
+
+
+class TestDeleteEDCourse(TestCase):
+    def setUp(self):
+        student_group = Group.objects.create(name='Student')
+        test_student = User.objects.create_user(
+            username='test_student',
+            password='thisisastudent',
+        )
+        test_student.groups.add(student_group)
+
+        other_test_student = User.objects.create_user(
+            username='other_student',
+            password='anotherstudent',
+        )
+        other_test_student.groups.add(student_group)
+
+        term = Term()
+        term.code = 202009
+        term.save()
+
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+        
+        edcourse = EDCourse()
+        edcourse.student = test_student
+        edcourse.course = course
+        edcourse.credits = 3
+        edcourse.save()
+
+        other_edcourse = EDCourse()
+        other_edcourse.student = other_test_student
+        other_edcourse.course = other_course
+        other_edcourse.credits = 4
+        other_edcourse.save()
+
+        council_group = Group.objects.create(name='Council')
+        test_council = User.objects.create_user(
+            username='test_council',
+            password='thisiscouncil',
+        )
+
+        test_council.groups.add(council_group)
+
+        wspstaff_group = Group.objects.create(name='WSP Staff')
+        test_wspstaff = User.objects.create_user(
+            username='test_wspstaff',
+            password='thisiswspstaff',
+        )
+        test_wspstaff.groups.add(wspstaff_group)
+
+    def test_student_can_delete_own_course(self):
+        test_student = User.objects.get(username="test_student")
+        self.assertTrue(is_student(test_student))
+
+        logged_in = self.client.force_login(test_student)
+
+        engl = Subject.objects.get(short="ENGL")
+        whyread = Course.objects.get(
+            subject=engl,
+            number="120",
+            title="Why Read?",
+        )
+        edcourse = EDCourse.objects.get(
+            student=test_student,
+            course=whyread,
+        )
+
+        payload = {'course_id': edcourse.id}
+        response = self.client.post(reverse('deleteEDCourse'), payload)
+
+        redirect_path = reverse('CourseList')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+
+        with self.assertRaises(EDCourse.DoesNotExist):
+            edcourse = EDCourse.objects.get(
+                student=test_student,
+                course=whyread,
+            )
+
+    def test_student_cannot_delete_other_course(self):
+        test_student = User.objects.get(username="test_student")
+        self.assertTrue(is_student(test_student))
+
+        logged_in = self.client.force_login(test_student)
+
+        other_student = User.objects.get(username="other_student")
+        biol = Subject.objects.get(short="BIOL")
+        cellbio = Course.objects.get(
+            subject=biol,
+            number="151",
+            title="Cell & Molecular Biology",
+        )
+        edcourse = EDCourse.objects.get(
+            student=other_student,
+            course=cellbio,
+        )
+
+        payload = {'course_id': edcourse.id}
+        response = self.client.post(reverse('deleteEDCourse'), payload)
+
+        redirect_path = reverse('Index')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+
+        self.assertEqual(edcourse, EDCourse.objects.get(id=edcourse.id))
+
+    def test_council_cannot_delete_student_course(self):
+        test_council = User.objects.get(username="test_council")
+        self.assertTrue(is_council(test_council))
+
+        logged_in = self.client.force_login(test_council)
+
+        other_student = User.objects.get(username="other_student")
+        biol = Subject.objects.get(short="BIOL")
+        cellbio = Course.objects.get(
+            subject=biol,
+            number="151",
+            title="Cell & Molecular Biology",
+        )
+        edcourse = EDCourse.objects.get(
+            student=other_student,
+            course=cellbio,
+        )
+
+        payload = {'course_id': edcourse.id}
+        response = self.client.post(reverse('deleteEDCourse'), payload)
+
+        redirect_path = reverse('Index')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+
+        self.assertEqual(edcourse, EDCourse.objects.get(id=edcourse.id))
+
+    def test_wspstaff_cannot_delete_student_course(self):
+        test_wspstaff = User.objects.get(username="test_wspstaff")
+        self.assertTrue(is_WSPstaff(test_wspstaff))
+
+        logged_in = self.client.force_login(test_wspstaff)
+
+        other_student = User.objects.get(username="other_student")
+        biol = Subject.objects.get(short="BIOL")
+        cellbio = Course.objects.get(
+            subject=biol,
+            number="151",
+            title="Cell & Molecular Biology",
+        )
+        edcourse = EDCourse.objects.get(
+            student=other_student,
+            course=cellbio,
+        )
+
+        payload = {'course_id': edcourse.id}
+        response = self.client.post(reverse('deleteEDCourse'), payload)
+
+        redirect_path = reverse('Index')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_path)
+
+        self.assertEqual(edcourse, EDCourse.objects.get(id=edcourse.id))
