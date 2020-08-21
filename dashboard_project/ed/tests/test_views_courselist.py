@@ -742,7 +742,7 @@ class TestDeleteEDCourse(TestCase):
         other_course.number = "151"
         other_course.title = "Cell & Molecular Biology"
         other_course.save()
-        
+
         edcourse = EDCourse()
         edcourse.student = test_student
         edcourse.course = course

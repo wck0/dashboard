@@ -1,16 +1,18 @@
 from ed.models import *
 from django.db.models import Sum
 
+
 # some common tools, useful across the site
 def calculate_credits(qs):
     aggr = qs.aggregate(Sum('credits'))
     qs.total = aggr.get('credits__sum')
-    
+
     completed = qs.filter(completed=True)
     aggr = completed.aggregate(Sum('credits'))
     qs.earned = aggr.get('credits__sum')
 
     return qs
+
 
 # user courses
 def all_courses(user):
@@ -21,10 +23,14 @@ def all_courses(user):
     The attribute "earned" is added to the object, storing the
     sum of all credits for all completed coruses in the QuerySet.
     """
-    qs = EDCourse.objects.filter(student=user).order_by('course__subject', 'course__number')
+    qs = EDCourse.objects.filter(student=user).order_by(
+        'course__subject',
+        'course__number'
+    )
     qs = calculate_credits(qs)
-    
+
     return qs
+
 
 def WSPcourses(user):
     """
@@ -32,10 +38,14 @@ def WSPcourses(user):
     The attribute "total" is added to the object, storing the
     sum of all credits for courses in the QuerySet.
     """
-    qs = EDCourse.objects.filter(student=user, course__subject__short='WSP').order_by('course__number')
+    qs = EDCourse.objects.filter(
+        student=user,
+        course__subject__short='WSP'
+    ).order_by('course__number')
     qs = calculate_credits(qs)
-    
+
     return qs
+
 
 def courses_by_division(user):
     """
@@ -54,16 +64,20 @@ def courses_by_division(user):
                 student=user,
                 course__subject__department__division__name=div
              ).order_by('course__subject', 'course__number')
-        qs = calculate_credits(qs)       
+        qs = calculate_credits(qs)
         divcourses[div] = qs
-    
+
     return divcourses
+
 
 def major_courses(user, major):
     """
-    
+
     """
-    qs = EDCourse.objects.filter(student=user).order_by('course__subject', 'course__number')
+    qs = EDCourse.objects.filter(student=user).order_by(
+        'course__subject',
+        'course__number',
+    )
     # firgures out which major it's getting information for
     if major == 1:
         qs = qs.filter(maj1=True)
@@ -83,11 +97,15 @@ def major_courses(user, major):
     # returns all the information
     return qs
 
+
 def minor_courses(user, minor):
     """
-    
+
     """
-    qs = EDCourse.objects.filter(student=user).order_by('course__subject', 'course__number')
+    qs = EDCourse.objects.filter(student=user).order_by(
+        'course__subject',
+        'course__number',
+    )
     # firgures out which minor it's getting information for
     if minor == 1:
         qs = qs.filter(min1=True)
@@ -106,12 +124,17 @@ def minor_courses(user, minor):
     # returns all the information
     return qs
 
+
 def supporting_courses(user):
     """
-    returns a query set of all classes that aren't in a major or are a WSP class
+    returns a query set of all classes that aren't in a major
+    or are a WSP class
     """
-    #excludes all the classes that are already part of a major or minor
-    qs = EDCourse.objects.filter(student=user).order_by('course__subject', 'course__number')
+    # excludes all the classes that are already part of a major or minor
+    qs = EDCourse.objects.filter(student=user).order_by(
+        'course__subject',
+        'course__number',
+    )
     qs = qs.exclude(maj1=True)\
            .exclude(maj2=True)\
            .exclude(min1=True)\
@@ -120,14 +143,18 @@ def supporting_courses(user):
     # calculates the number of credits this major has
     if qs:
         qs = calculate_credits(qs)
-    
+
     return qs
+
 
 def approved_courses(user):
     """
-    returns a query set of approved courses 
+    returns a query set of approved courses
     """
-    qs = ApprovedCourse.objects.filter(student=user).order_by('course__subject', 'course__number')
+    qs = ApprovedCourse.objects.filter(student=user).order_by(
+        'course__subject',
+        'course__number',
+    )
     qs = calculate_credits(qs)
-    
+
     return qs
