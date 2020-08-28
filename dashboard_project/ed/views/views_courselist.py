@@ -95,6 +95,7 @@ def CourseList(request, username=None):
             else:
                 student = User.objects.get(username=username)
                 studentcourses = all_courses(student)
+                semcourses = semester_courses(student)
                 divcourses = courses_by_division(student)
                 major1 = major_courses(student, 1)
                 major2 = major_courses(student, 2)
@@ -110,6 +111,7 @@ def CourseList(request, username=None):
                         'pagename': student.get_full_name() + " Course list",
                         'user': student,
                         'usercourses': studentcourses,
+                        'semcourses': semcourses,
                         'divcourses': divcourses,
                         'major1': major1,
                         'major2': major2,
