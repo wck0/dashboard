@@ -38,6 +38,7 @@ except HeroImage.DoesNotExist:
 # fix login_required error
 
 
+
 @login_required
 def CourseList(request, username=None):
     user = request.user
@@ -58,6 +59,11 @@ def CourseList(request, username=None):
     elif request.method == 'GET':
         if is_student(user):
             studentcourses = all_courses(user)
+            semcourses = semester_courses(user)
+            major1 = major_courses(user, 1)
+            major2 = major_courses(user, 2)
+            minor1 = minor_courses(user, 1)
+            minor2 = minor_courses(user, 2)
             return render(
                 request,
                 'ed/courselist.html',
@@ -65,6 +71,11 @@ def CourseList(request, username=None):
                     'pagename': "Course List",
                     'user': user,
                     'usercourses': studentcourses,
+                    'semcourses': semcourses,
+                    'major1': major1,
+                    'major2': major2,
+                    'minor1': minor1,
+                    'minor2': minor2,
                     'hero': hero,
                 }
             )
@@ -94,7 +105,7 @@ def CourseList(request, username=None):
                 edgoals = EducationalGoal.objects.filter(student=user)
 
                 return render(
-                    request, 'ed/all.html',
+                    request, 'ed/courselist.html',
                     {
                         'pagename': student.get_full_name() + " Course list",
                         'user': student,
