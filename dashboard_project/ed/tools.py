@@ -158,3 +158,20 @@ def approved_courses(user):
     qs = calculate_credits(qs)
 
     return qs
+
+def semester_courses(user):
+    """
+    returns a dictionary of courses broken up by term
+
+    """
+    qs = EDCourse.objects.filter(student=user).order_by(
+        'term__code'
+    )
+    
+    terms_dict = { course.term : [] for course in qs }
+
+    for course in qs:
+        terms_dict[course.term].append(course)
+
+    #assert False 
+    return terms_dict
