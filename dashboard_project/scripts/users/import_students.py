@@ -7,7 +7,7 @@
 
 import csv
 from django.contrib.auth.models import User, Group
-from vita.models import Student, Application
+from vita.models import Student, Application, OffCampusExperience
 from ed.models import Course, EDCourse, ApprovedCourse
 from siteconfig.models import RequiredCourses
 
