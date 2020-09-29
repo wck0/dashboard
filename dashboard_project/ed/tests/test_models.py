@@ -8,6 +8,9 @@ from ed.models import *
 
 
 class TermModelTest(TestCase):
+    def setUp(self):
+        pass
+
     def test_saving_and_retrieving_terms(self):
         term = Term()
         term.code = 201901
@@ -43,6 +46,9 @@ class TermModelTest(TestCase):
 
 
 class DivisionModelTest(TestCase):
+    def setUp(self):
+        pass
+
     def test_saving_and_retrieving_divisions(self):
         division = Division()
         division.code = 1
@@ -76,15 +82,18 @@ class DivisionModelTest(TestCase):
 
 
 class DepartmentModelTest(TestCase):
-    def test_saving_and_retrieving_department(self):
+    def setUp(self):
         division = Division()
         division.code = 1
         division.name = "Humanities"
         division.save()
 
+    def test_saving_and_retrieving_department(self):
+        humanities = Division.objects.get(name="Humanities")
+
         department = Department()
         department.name = "English"
-        department.division = division
+        department.division = humanities
         department.save()
 
         saved_departments = Department.objects.all()
@@ -92,7 +101,7 @@ class DepartmentModelTest(TestCase):
 
         first_saved_department = saved_departments[0]
         self.assertEqual(first_saved_department.name, "English")
-        self.assertEqual(first_saved_department.division, division)
+        self.assertEqual(first_saved_department.division, humanities)
 
     def test_cannot_save_empty_department(self):
         department = Department()
@@ -102,7 +111,7 @@ class DepartmentModelTest(TestCase):
 
 
 class SubjectModelTest(TestCase):
-    def test_saving_and_retrieving_subject(self):
+    def setUp(self):
         division = Division()
         division.code = 2
         division.name = "Natural Sciences"
@@ -117,6 +126,13 @@ class SubjectModelTest(TestCase):
         other_department.name = "Biology"
         other_department.division = division
         other_department.save()
+
+    def test_saving_and_retrieving_subject(self):
+        division = Division.objects.get(name="Natural SCiences")
+        department = Department.objects.get(
+            name="Mathematics & Computer Science"
+        )
+        other_department = Department.objects.get(name="Biology")
 
         subject = Subject()
         subject.name = "Mathematics"
@@ -162,7 +178,68 @@ class SubjectModelTest(TestCase):
         self.assertIsNone(first_saved_subject.department)
 
 
+class CourseModelTest(TestCase):
+    def setUp(self):
+        subject = Subject()
+        subject.name = "English"
+        subject.short = "ENGL"
+        subject.save()
+
+        other_subject = Subject()
+        other_subject.name = "Biology"
+        other_subject.short = "BIOL"
+        other_subject.save()
+
+    def test_saving_and_retrieving_course(self):
+        subject = Subject.objects.get(name="English")
+        other_subject = Subject.objects.get(name="Biology")
+
+        course = Course()
+        course.subject = subject
+        course.number = "120"
+        course.title = "Why Read?"
+        course.save()
+
+        other_course = Course()
+        other_course.subject = other_subject
+        other_course.number = "151"
+        other_course.title = "Cell & Molecular Biology"
+        other_course.save()
+
+        saved_courses = Course.objects.all()
+        self.assertEqual(saved_courses.count(), 2)
+
+        first_saved_course = saved_courses[0]
+        second_saved_course = saved_courses[1]
+
+        self.assertEqual(first_saved_course, course)
+        self.assertEqual(first_saved_course.subject, subject)
+        self.assertEqual(first_saved_course.number, "120")
+        self.assertEqual(first_saved_course.title, "Why Read?")
+        self.assertEqual(second_saved_course, other_course)
+        self.assertEqual(second_saved_course.subject, other_subject)
+        self.assertEqual(second_saved_course.number, "151")
+        self.assertEqual(second_saved_course.title, "Cell & Molecular Biology")
+
+    def test_cannot_save_empty_course(self):
+        course = Course()
+        with self.assertRaises(IntegrityError):
+            course.save()
+            course.full_clean()
+
+    def test_cannot_save_course_without_subject(self):
+        course = Course()
+        course.number = "141"
+        course.title = "Calculus & Analytical Geometry I"
+        with self.assertRaises(IntegrityError):
+            course.save()
+            course.full_clean()
+
+
 class MajorMinorModelTest(TestCase):
+    def setUp(self):
+        pass
+
     def test_can_save_and_retrieve_major_and_minor(self):
         student = User()
         student.username = "a student"
@@ -240,62 +317,8 @@ class MajorMinorModelTest(TestCase):
         self.assertEqual(second_saved_minor.number, 1)
 
 
-class CourseModelTest(TestCase):
-    def test_saving_and_retrieving_course(self):
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        other_subject = Subject()
-        other_subject.name = "Biology"
-        other_subject.short = "BIOL"
-        other_subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
-
-        other_course = Course()
-        other_course.subject = other_subject
-        other_course.number = "151"
-        other_course.title = "Cell & Molecular Biology"
-        other_course.save()
-
-        saved_courses = Course.objects.all()
-        self.assertEqual(saved_courses.count(), 2)
-
-        first_saved_course = saved_courses[0]
-        second_saved_course = saved_courses[1]
-
-        self.assertEqual(first_saved_course, course)
-        self.assertEqual(first_saved_course.subject, subject)
-        self.assertEqual(first_saved_course.number, "120")
-        self.assertEqual(first_saved_course.title, "Why Read?")
-        self.assertEqual(second_saved_course, other_course)
-        self.assertEqual(second_saved_course.subject, other_subject)
-        self.assertEqual(second_saved_course.number, "151")
-        self.assertEqual(second_saved_course.title, "Cell & Molecular Biology")
-
-    def test_cannot_save_empty_course(self):
-        course = Course()
-        with self.assertRaises(IntegrityError):
-            course.save()
-            course.full_clean()
-
-    def test_cannot_save_course_without_subject(self):
-        course = Course()
-        course.number = "141"
-        course.title = "Calculus & Analytical Geometry I"
-        with self.assertRaises(IntegrityError):
-            course.save()
-            course.full_clean()
-
-
 class EDCourseModelTest(TestCase):
-    def test_saving_and_retrieving_edcourse(self):
+    def setUp(self):
         student = User()
         student.username = "a student"
         student.set_password("secure password")
@@ -327,6 +350,15 @@ class EDCourseModelTest(TestCase):
         other_course.number = "151"
         other_course.title = "Cell & Molecular Biology"
         other_course.save()
+
+    def test_saving_and_retrieving_edcourse(self):
+        student = User.objects.get(username="a student")
+        other_student = User.objects.get(username="another student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        other_course = Course.objects.get(
+            number="151",
+            title="Cell & Molecular Biology"
+        )
 
         edcourse = EDCourse()
         edcourse.student = student
@@ -362,21 +394,8 @@ class EDCourseModelTest(TestCase):
             edcourse.full_clean()
 
     def test_cannot_save_edcourse_missing_student(self):
-        student = User()
-        student.username = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
 
         # missing student
         edcourse = EDCourse()
@@ -388,21 +407,8 @@ class EDCourseModelTest(TestCase):
             edcourse.full_clean()
 
     def test_cannot_save_edcourse_missing_course(self):
-        student = User()
-        student.username = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
 
         # missing course
         edcourse = EDCourse()
@@ -414,21 +420,8 @@ class EDCourseModelTest(TestCase):
             edcourse.full_clean()
 
     def test_cannot_save_edcourse_missing_credits(self):
-        student = User()
-        student.username = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
 
         # missing credits
         edcourse = EDCourse()
@@ -441,9 +434,9 @@ class EDCourseModelTest(TestCase):
 
 
 class ApprovedCourseModelTest(TestCase):
-    def test_saving_and_retreiving_approvedcourse(self):
+    def setUp(self):
         student = User()
-        student.name = "a student"
+        student.username = "a student"
         student.set_password("secure password")
         student.save()
 
@@ -485,6 +478,20 @@ class ApprovedCourseModelTest(TestCase):
         other_edcourse.course = other_course
         other_edcourse.credits = 4
         other_edcourse.save()
+
+    def test_saving_and_retreiving_approvedcourse(self):
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
+        other_student = User.objects.get(username="another student")
+        other_course = Course.objects.get(
+            number="151",
+            title="Cell & Molecular Biology"
+        )
+        other_edcourse = EDCourse.objects.get(
+            student=other_student,
+            course=other_course
+        )
 
         approvedcourse = ApprovedCourse()
         approvedcourse.student = student
@@ -530,27 +537,9 @@ class ApprovedCourseModelTest(TestCase):
         self.assertEqual(second_saved_approvedcourse, other_approvedcourse)
 
     def test_approvedcourse_student_is_edcourse_student(self):
-        student = User()
-        student.name = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
-
-        edcourse = EDCourse()
-        edcourse.student = student
-        edcourse.course = course
-        edcourse.credits = 3
-        edcourse.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
 
         approvedcourse = ApprovedCourse()
         approvedcourse.student = student
@@ -576,30 +565,12 @@ class ApprovedCourseModelTest(TestCase):
         self.assertEqual(the_edcourse.student, student)
 
     def test_cannot_save_approved_course_missing_student(self):
-        student = User()
-        student.name = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
-
-        edcourse = EDCourse()
-        edcourse.student = student
-        edcourse.course = course
-        edcourse.credits = 3
-        edcourse.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
 
         approvedcourse = ApprovedCourse()
-#        approvedcourse.student = student # missing student
+        # missing student
         approvedcourse.course = course
         approvedcourse.term = edcourse.term
         approvedcourse.credits = edcourse.credits
@@ -619,31 +590,13 @@ class ApprovedCourseModelTest(TestCase):
             approvedcourse.full_clean()
 
     def test_cannot_save_approved_course_missing_course(self):
-        student = User()
-        student.name = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
-
-        edcourse = EDCourse()
-        edcourse.student = student
-        edcourse.course = course
-        edcourse.credits = 3
-        edcourse.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
 
         approvedcourse = ApprovedCourse()
         approvedcourse.student = student
-#        approvedcourse.course = course # missing course
+        # missing course
         approvedcourse.term = edcourse.term
         approvedcourse.credits = edcourse.credits
         approvedcourse.completed = edcourse.completed
@@ -662,33 +615,15 @@ class ApprovedCourseModelTest(TestCase):
             approvedcourse.full_clean()
 
     def test_cannot_save_approved_course_missing_credits(self):
-        student = User()
-        student.name = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
-
-        edcourse = EDCourse()
-        edcourse.student = student
-        edcourse.course = course
-        edcourse.credits = 3
-        edcourse.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
 
         approvedcourse = ApprovedCourse()
         approvedcourse.student = student
         approvedcourse.course = course
         approvedcourse.term = edcourse.term
-#        approvedcourse.credits = edcourse.credits # missing credits
+        # missing credits
         approvedcourse.completed = edcourse.completed
         approvedcourse.crn = edcourse.crn
         approvedcourse.instructor = edcourse.instructor
@@ -706,7 +641,7 @@ class ApprovedCourseModelTest(TestCase):
 
 
 class EducationalGoalModelTest(TestCase):
-    def test_saving_and_retrieving_educationalgoal(self):
+    def setUp(self):
         student = User()
         student.username = "a student"
         student.set_password("secure password")
@@ -728,15 +663,6 @@ class EducationalGoalModelTest(TestCase):
         edcourse.course = course
         edcourse.credits = 3
         edcourse.save()
-
-        educationalgoal = EducationalGoal()
-        educationalgoal.student = student
-        educationalgoal.title = "Take Over the World"
-        educationalgoal.description = "The same thing we do every night..."
-        educationalgoal.save()
-
-        educationalgoal.courses.add(edcourse)
-        educationalgoal.save()
 
         other_student = User()
         other_student.username = "another student"
@@ -760,6 +686,29 @@ class EducationalGoalModelTest(TestCase):
         other_edcourse.credits = 4
         other_edcourse.save()
 
+    def test_saving_and_retrieving_educationalgoal(self):
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
+        other_student = User.objects.get(username="another student")
+        other_course = Course.objects.get(
+            number="151",
+            title="Cell & Molecular Biology"
+        )
+        other_edcourse = EDCourse.objects.get(
+            student=other_student,
+            course=other_course
+        )
+
+        educationalgoal = EducationalGoal()
+        educationalgoal.student = student
+        educationalgoal.title = "Take Over the World"
+        educationalgoal.description = "The same thing we do every night..."
+        educationalgoal.save()
+
+        educationalgoal.courses.add(edcourse)
+        educationalgoal.save()
+
         other_educationalgoal = EducationalGoal()
         other_educationalgoal.student = other_student
         other_educationalgoal.title = "Achieve Equality"
@@ -781,44 +730,18 @@ class EducationalGoalModelTest(TestCase):
         self.assertIn(other_edcourse, second_educationalgoal.courses.all())
 
     def test_can_save_many_edcourses_to_an_educationalgoal(self):
-        student = User()
-        student.username = "a student"
-        student.set_password("secure password")
-        student.save()
-
-        subject = Subject()
-        subject.name = "English"
-        subject.short = "ENGL"
-        subject.save()
-
-        course = Course()
-        course.subject = subject
-        course.number = "120"
-        course.title = "Why Read?"
-        course.save()
-
-        edcourse = EDCourse()
-        edcourse.student = student
-        edcourse.course = course
-        edcourse.credits = 3
-        edcourse.save()
-
-        other_subject = Subject()
-        other_subject.name = "Biology"
-        other_subject.short = "BIOL"
-        other_subject.save()
-
-        other_course = Course()
-        other_course.subject = other_subject
-        other_course.number = "151"
-        other_course.title = "Cell & Molecular Biology"
-        other_course.save()
-
-        other_edcourse = EDCourse()
-        other_edcourse.student = student
-        other_edcourse.course = other_course
-        other_edcourse.credits = 4
-        other_edcourse.save()
+        student = User.objects.get(username="a student")
+        course = Course.objects.get(number="120", title="Why Read?")
+        edcourse = EDCourse.objects.get(student=student, course=course)
+        other_student = User.objects.get(username="another student")
+        other_course = Course.objects.get(
+            number="151",
+            title="Cell & Molecular Biology"
+        )
+        other_edcourse = EDCourse.objects.get(
+            student=other_student,
+            course=other_course
+        )
 
         educationalgoal = EducationalGoal()
         educationalgoal.student = student
