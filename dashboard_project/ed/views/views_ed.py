@@ -53,8 +53,8 @@ def EDIndex(request):
 
 @login_required
 def API(request, subj='', num=''):
-
     user = request.user
+
     if request.method == 'GET':
         if subj:
             if num:
@@ -74,7 +74,7 @@ def API(request, subj='', num=''):
         else:
             if num:
                 redirect(reverse('Index'))
-            return JsonResponse([], safe=False)
+            return JsonResponse({}, safe=False)
 
 
 @login_required
