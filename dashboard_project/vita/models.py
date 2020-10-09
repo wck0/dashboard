@@ -7,6 +7,7 @@ from ed.models import Term
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 from localflavor.us.models import USStateField, USZipCodeField
+import hashlib
 
 # TODO: Fix name of Menu_item and all references.
 # TODO: Fix name of Home_page and all references.
@@ -38,8 +39,15 @@ class Student(models.Model):
     ED_meeting_complete = models.BooleanField(default=False)    
     PR_meeting_complete = models.BooleanField(default=False)
     narrative = RichTextField(blank=True, null=True)
+    shared_url = models.CharField(max_length=64, blank=True)
     active = models.BooleanField(default=True)
-    
+
+    def sharable_hash(self):
+        data = str(self.user.username).encode('utf-8')
+        salt = str(self.user.password).encode('utf-8')
+        return hashlib.sha256(data + salt).hexdigest() # will be 64 characters
+
+
     def __repr__(self):
         return "<Student: %s>" % (self.user.username)
     

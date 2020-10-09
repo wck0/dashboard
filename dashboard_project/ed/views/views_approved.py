@@ -23,7 +23,6 @@ try:
 except HeroImage.DoesNotExist:
     hero = None
 
-
 @login_required
 def ApprovedCourseList(request, username=None):
     user = request.user

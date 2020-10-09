@@ -37,6 +37,39 @@ except HeroImage.DoesNotExist:
 # Defaults to Index if no other return is hit
 # fix login_required error
 
+def SharedList(request, shared_url=None):
+    if request.method == 'POST':
+            return redirect(reverse('Index'))
+    
+    elif request.method == 'GET':
+        if not shared_url:
+            return redirect(reverse('Index'))
+        try: 
+            student = Student.objects.get(shared_url=shared_url).user
+        except Student.DoesNotExist:
+            return redirect(reverse('Index'))
+
+        studentcourses = all_courses(student)
+        semcourses = semester_courses(student)
+        major1 = major_courses(student, 1)
+        major2 = major_courses(student, 2)
+        minor1 = minor_courses(student, 1)
+        minor2 = minor_courses(student, 2)
+
+        return render(
+            request, 'ed/sharedlist.html',
+            {
+                'pagename': " Course list",
+                'user': student,
+                'usercourses': studentcourses,
+                'semcourses': semcourses,
+                'major1': major1,
+                'major2': major2,
+                'minor1': minor1,
+                'minor2': minor2,
+                'hero': hero,
+            }
+        )
 
 
 @login_required
@@ -45,7 +78,16 @@ def CourseList(request, username=None):
 
     if request.method == 'POST':
 
-        if is_WSPstaff(user) or is_council(user):
+        if request.POST.get('create_link'):
+            username = request.POST.get('create_link')
+            student = Student.objects.get(user__username=username)
+            pwd_hash = student.sharable_hash()
+            student.shared_url = pwd_hash
+            student.save()
+            
+            return redirect(reverse('CourseList')+username)
+
+        elif is_WSPstaff(user) or is_council(user):
             try:
                 student = User.objects.get(id=request.POST.get('student'))
             except User.DoesNotExist:
@@ -64,6 +106,10 @@ def CourseList(request, username=None):
             major2 = major_courses(user, 2)
             minor1 = minor_courses(user, 1)
             minor2 = minor_courses(user, 2)
+            shared_url = Student.objects.get(user=user).shared_url
+            if shared_url:
+                shared_url = request.build_absolute_uri(reverse('SharedList')) + shared_url
+
             return render(
                 request,
                 'ed/courselist.html',
@@ -76,6 +122,7 @@ def CourseList(request, username=None):
                     'major2': major2,
                     'minor1': minor1,
                     'minor2': minor2,
+                    'shared_url': shared_url,
                     'hero': hero,
                 }
             )
@@ -96,14 +143,13 @@ def CourseList(request, username=None):
                 student = User.objects.get(username=username)
                 studentcourses = all_courses(student)
                 semcourses = semester_courses(student)
-                divcourses = courses_by_division(student)
                 major1 = major_courses(student, 1)
                 major2 = major_courses(student, 2)
                 minor1 = minor_courses(student, 1)
-                minor2 = minor_courses(student, 2)
-                wspcourses = WSPcourses(student)
-                support = supporting_courses(student)
-                edgoals = EducationalGoal.objects.filter(student=user)
+                minor2 = minor_courses(student, 2) 
+                shared_url = Student.objects.get(user=student).shared_url
+                if shared_url:
+                    shared_url = request.build_absolute_uri(reverse('SharedList')) + shared_url
 
                 return render(
                     request, 'ed/courselist.html',
@@ -112,21 +158,16 @@ def CourseList(request, username=None):
                         'user': student,
                         'usercourses': studentcourses,
                         'semcourses': semcourses,
-                        'divcourses': divcourses,
                         'major1': major1,
                         'major2': major2,
                         'minor1': minor1,
                         'minor2': minor2,
-                        'wspcourses': wspcourses,
-                        'support': support,
-                        'edgoals': edgoals,
+                        'shared_url': shared_url,
                         'hero': hero,
                     }
                 )
-
         else:
             return redirect(reverse('Index'))
-
     else:
         return redirect(reverse('Index'))
 

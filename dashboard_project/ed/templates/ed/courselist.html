@@ -1,11 +1,28 @@
 {% extends 'edbase.html' %}
 
 {% block content %}
-<div>
+<div class="row">
     <a class="btn btn-primary" style="font-size: 20px;" href="{% url 'AddCourse' %}">Add a course</a>
     <button class="tablinks btn btn-secondary" onclick="openTab(event, 'allCourses')" id="defaultOpen">All Courses</button>
     <button class="tablinks btn btn-secondary" onclick="openTab(event, 'semCourses')">By Semester</button>
     <button class="tablinks btn btn-secondary" onclick="openTab(event, 'majorCourses')">By Major/Minor</button>
+    
+    {% if shared_url %}
+    <b style="margin-left: 20px">Shareable Link: <b>
+    <input type ="text" id="copy_link" style="width: 500px" value="{{ shared_url }}">
+    <button class="btn material-icons" style="padding: 7px" onclick="clipBoard()">
+        content_copy
+    </button>
+    {% else %}
+    <form method="post" action="{% url 'CourseList' %}" class="inline" style="margin-bottom: 0px;">
+        {% csrf_token %}
+        <input type ="hidden" name="create_link" value="{{ user.username }}">
+        <button class="btn btn-primary" type="submit">
+            Create Sharable Link
+        </button>
+    </form>
+    {% endif %}
+
 </div>
 
 <br>
@@ -26,6 +43,21 @@
 {% endblock content %}
 
 {% block javascript %}
+function clipBoard() {
+  /* Get the text field */
+  var copyText = document.getElementById("copy_link");
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+
+  /* Alert the copied text */
+  alert("Copied Shareable Link");
+}
+
 function openTab(evt, tabName) {
   // Declare all variables
   var i, tabcontent, tablinks;

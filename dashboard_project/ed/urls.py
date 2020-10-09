@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.EDIndex, name='EDIndex'),
+    path('sharedlist/', views.SharedList, name='SharedList'),
+    path('sharedlist/<str:shared_url>', views.SharedList, name='SharedList'),
     path('courselist/', views.CourseList, name='CourseList'),
     path('courselist/<str:username>', views.CourseList, name='CourseList'),
     path('majmin/', views.MajorMinor, name='MajorMinor'),
