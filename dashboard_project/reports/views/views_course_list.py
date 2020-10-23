@@ -96,10 +96,9 @@ def CourseListPDF(request, username=None):
     flowables.append(Spacer(0,5))
     
     # narative
-    if not student.ED_meeting_complete:
-        flowables.append(Paragraph('Narrative', sample_style_sheet['Heading1']))
-        flowables.append(Paragraph(f'{strip_tags(student.narrative)}', sample_style_sheet['BodyText']))
-        flowables.append(PageBreak())
+    flowables.append(Paragraph('Narrative', sample_style_sheet['Heading1']))
+    flowables.append(Paragraph(f'{strip_tags(student.narrative)}', sample_style_sheet['BodyText']))
+    flowables.append(PageBreak())
     
     # goal
     flowables.append(Paragraph('Educational Goals', sample_style_sheet['Heading1']))
