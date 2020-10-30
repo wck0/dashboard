@@ -86,8 +86,8 @@ def Info(request, username=None):
     if is_student(user):
         if username is not None:
             return redirect(reverse('VitaInfo'))
+        
         if request.method == 'GET':
-     
             student = Student.objects.get(user=user)
             form = StudentInfoForm(instance=student)
             if student.phone:
@@ -158,7 +158,6 @@ def ApplicationView(request, username=None):
             appform = ApplicationForm(instance=app)
             if student.phone:
                 infoform['phone'].initial = student.phone.as_national
-            
             usercourses = all_courses(user)
         
             return render(request, 'vita/application.html',

@@ -3,56 +3,70 @@
 {% block content %}
 
 <br>
-<h3 align="center">Print Full Educational Design (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/pdf">pdf</a>) (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/csv">csv</a>)</h3>
+<h3 align="center">
+    Print Full Educational Design (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/pdf">pdf</a>) (<a href="{% url 'ReportsIndex' %}courselist/{{ username }}/csv">csv</a>)
+</h3>
 <br>
 
 <div class="container">
     <!-- Majors -->
+    {% if major1 or major2 %}
     <div class="card">
         <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Majors: </h3>
         <div class="card-body">
             <div class="row">
+                {% if major1 %}
                 <div class="col-md-6">
-                    {% if major1 %}
                     <h3 align="center">{{ major1.title }}:</h3>
                     <canvas id="major1" style="max-width: 500px;"></canvas>
-                    <h4 align="center" style="font-weight: 300;">{{ major1.total }} Credits ({{ major1.earned }} earned)</h4>
-                    {% endif %}
+                    <h4 align="center" style="font-weight: 300;">
+                        {{ major1.total }} Credits ({{ major1.earned }} earned)
+                    </h4>
                 </div>
+                {% endif %}
+                {% if major2 %}
                 <div class="col-md-6">
-                    {% if major2 %}
                     <h3 align="center">{{ major2.title }}:</h3>
                     <canvas id="major2" style="max-width: 500px;"></canvas>
-                    <h4 align="center" style="font-weight: 300;">{{ major2.total }} Credits ({{ major2.earned }} earned)</h4>
-                    {% endif %}
+                    <h4 align="center" style="font-weight: 300;">
+                        {{ major2.total }} Credits ({{ major2.earned }} earned)
+                    </h4>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
     <br>
+    {% endif %}
     <!-- Minors -->
+    {% if minor1 or minor2 %}
     <div class="card">
         <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Minors: </h2>
         <div class="card-body">
             <div class="row">
+                {% if minor1 %}
                 <div class="col-md-6">                
-                    {% if minor1 %}
                     <h3 align="center">{{ minor1.title }}:</h3>
                     <canvas id="minor1" style="max-width: 500px;"></canvas>
-                    <h4 align="center" style="font-weight: 300;">{{ minor1.total }} Credits ({{ minor1.earned }} earned)</h4>
-                    {% endif %}
+                    <h4 align="center" style="font-weight: 300;">
+                        {{ minor1.total }} Credits ({{ minor1.earned }} earned)
+                    </h4>
                 </div>
+                {% endif %}
+                {% if minor2 %}
                 <div class="col-md-6">
-                    {% if minor2 %}
                     <h3 align="center">{{ minor2.title }}:</h3>
                     <canvas id="minor2" style="max-width: 500px;"></canvas>
-                    <h4 align="center" style="font-weight: 300;">{{ minor2.total }} Credits ({{ minor2.earned }} earned)</h4>
-                    {% endif %}
+                    <h4 align="center" style="font-weight: 300;">
+                        {{ minor2.total }} Credits ({{ minor2.earned }} earned)
+                    </h4>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
     <br>
+    {% endif %}
     <!-- WSP and Total courses -->
     <div class="row">
         <!-- WSP -->
@@ -61,7 +75,9 @@
                 <h2 class="card-title bg-primary text-center text-light z-depth-1-half"> Wsp Courses: </h2>
                 {% if wspcourses %}
                 <canvas id="wsp" style="max-width: 500px;"></canvas>
-                <h4 align="center" style="font-weight: 300;">{{ wspcourses.total }} Credits ({{ wspcourses.earned }} earned)</h4>
+                <h4 align="center" style="font-weight: 300;">
+                    {{ wspcourses.total }} Credits ({{ wspcourses.earned }} earned)
+                </h4>
                 {% endif %}
             </div>
         </div>
