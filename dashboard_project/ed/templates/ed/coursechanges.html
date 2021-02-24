@@ -40,7 +40,7 @@
                             <input type ="hidden" name="course_id" value="{{ course.id }}">
                             <input type ="hidden" name="newcourse_id" value="{{ course.replacement.id }}">
                             <button class="btn btn-secondary btn-sm" type="submit">
-                                Approve
+                                File Button
                             </button>
                         </form>
                     </td>
@@ -55,7 +55,7 @@
                 });
             </script>
         {% else %}
-        <p> You do not seem to have removed any courses to your approved Educational Design.</p>
+        <p> You do not seem to have removed any courses to your filed Educational Design.</p>
         {% endif %}
     </br>
     <h4 class="card-title bg-secondary text-light text-center z-depth-1">Unapproved Courses</h4>
@@ -156,7 +156,7 @@
                             <input type ="hidden" name="student" value="{{ course.student }}">
                             <input type ="hidden" name="course_id" value="{{ course.id }}">
                             <button class="btn btn-secondary btn-sm" type="submit">
-                                Approve
+                                File Button
                             </button>
                         </form>
                     </td>

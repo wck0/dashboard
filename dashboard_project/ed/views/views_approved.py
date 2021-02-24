@@ -56,7 +56,7 @@ def ApprovedCourseList(request, username=None):
                 request,
                 'ed/approvedcourses.html',
                 {
-                    'pagename': 'Approved Course List',
+                    'pagename': 'Filed Design',
                     'user': user,
                     'usercourses': approvedcourses,
                     'removedcourses': removedcourses,
