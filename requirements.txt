@@ -1,5 +1,5 @@
 Babel==2.7.0
-Django==2.2.13 
+Django==2.2.21 
 django-bootstrap4==0.0.8
 django-ckeditor==5.7.1
 django-crispy-forms==1.7.2
