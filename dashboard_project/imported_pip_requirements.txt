@@ -11,4 +11,4 @@ phonenumberslite==8.10.15
 Pillow==6.1.0
 python-stdnum==1.11
 pytz==2018.5
-reportlab==3.5.23
+reportlab==3.5.55
