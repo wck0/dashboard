@@ -25,18 +25,18 @@ username = getpass.getuser()
 etcpath = '/home/' + username + '/etc'
 
 SECRET_KEY = os.environ.get('POETFOLIO_SECRET_KEY') or (
-             'YOU_SHOULD_GENERATE_YOUR_OWN_SECRET_KEY')
+         	'yN5i8gTkby3KiljNK82UTJ0Pd9Znek6TZqhhclZz9E3TCZaJKz')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if os.environ.get('POETFOLIO_PRODUCTION'):
-    DEBUG = False
+	DEBUG = False
 else:
-    DEBUG = True
+	DEBUG = True
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+	SECURE_SSL_REDIRECT = True
+	SESSION_COOKIE_SECURE = True
+	CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,52 +44,53 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'ed.apps.EdConfig',
-    'vita.apps.VitaConfig',
-    'reports.apps.ReportsConfig',
-    'siteconfig.apps.SiteconfigConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    #'django.static.jquery',
-    'phonenumber_field',
-    'bootstrap4',
-    'ckeditor',
+	'ed.apps.EdConfig',
+	'vita.apps.VitaConfig',
+	'reports.apps.ReportsConfig',
+	'siteconfig.apps.SiteconfigConfig',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	#'django.static.jquery',
+	'phonenumber_field',
+	'bootstrap4',
+	'ckeditor',
+	'django_extensions',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'poetfolio.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["ed/templates",
-                 "vita/templates",
-                 "poetfolio/templates",
-                 "reports/templates",
-                ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+    	'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    	'DIRS': ["ed/templates",
+             	"vita/templates",
+             	"poetfolio/templates",
+             	"reports/templates",
+            	],
+    	'APP_DIRS': True,
+    	'OPTIONS': {
+        	'context_processors': [
+            	'django.template.context_processors.debug',
+            	'django.template.context_processors.request',
+            	'django.contrib.auth.context_processors.auth',
+            	'django.contrib.messages.context_processors.messages',
+        	],
+    	},
+	},
 ]
 
 WSGI_APPLICATION = 'poetfolio.wsgi.application'
@@ -99,10 +100,10 @@ WSGI_APPLICATION = 'poetfolio.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 #DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
+#	'default': {
+#    	'ENGINE': 'django.db.backends.sqlite3',
+#    	'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#	}
 #}
 
 DB_NAME = os.environ.get('POETFOLIO_DB_NAME') or 'poetfolio_dev'
@@ -110,18 +111,18 @@ DB_USER = os.environ.get('POETFOLIO_DB_USER') or 'poetfolio'
 DB_PASSWORD = os.environ.get('POETFOLIO_DB_PASSWORD') or 'devdevdev'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-        'TEST': {
-            'NAME': 'test_poetfolio',
-        },
-        'OPTIONS': {'charset': 'utf8'},
-    }
+	'default': {
+    	'ENGINE': 'django.db.backends.mysql',
+    	'NAME': DB_NAME,
+    	'USER': DB_USER,
+    	'PASSWORD': DB_PASSWORD,
+    	'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+    	'PORT': '3306',
+    	'TEST': {
+        	'NAME': 'test_poetfolio',
+    	},
+    	'OPTIONS': {'charset': 'utf8'},
+	}
 }
 
 
@@ -129,18 +130,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+	{
+    	'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+	},
+	{
+    	'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+	},
+	{
+    	'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+	},
+	{
+    	'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+	},
 ]
 
 
@@ -164,11 +165,11 @@ import getpass
 username = getpass.getuser()
 STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('POETFOLIO_STATIC') or (
-              '/home/' + username + '/static')
+          	'/home/' + username + '/static')
 
 # media files
 MEDIA_ROOT = os.environ.get('POETFOLIO_MEDIA') or (
-             '/home/' + username + '/media')
+         	'/home/' + username + '/media')
 MEDIA_URL = '/media/'
 
 # login/logout
@@ -193,4 +194,6 @@ PHONENUMBER_DEFAULT_REGION = 'US'
 
 # Forces django to use temporary files for uploads
 FILE_UPLOAD_HANDLERS = [ 'django.core.files.uploadhandler.TemporaryFileUploadHandler' ]
-FILE_UPLOAD_PERMISSIONS = 0o644
+
+# Set default Values when creating objects
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
